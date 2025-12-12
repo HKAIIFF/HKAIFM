@@ -31,19 +31,24 @@
                         },
                         white: '#ffffff',
                         accent: '#2563eb', 
-                        success: '#10b981',
-                        warning: '#f59e0b',
-                        danger: '#ef4444',
+                        neonPurp: '#d946ef', 
+                        neonGreen: '#10b981', 
+                        neonYellow: '#f59e0b', 
+                        neonRed: '#ef4444',
                     },
                     animation: {
-                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(37, 99, 235, 0.2)' },
+                            '100%': { boxShadow: '0 0 20px rgba(37, 99, 235, 0.6)' },
                         }
                     }
                 }
@@ -60,33 +65,33 @@
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #fff; }
-        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
 
         .project-card {
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .project-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .roadshow-card {
+            transition: all 0.3s ease;
+        }
+        .roadshow-card:hover {
+            transform: translateY(-5px);
+            border-color: #2563eb;
         }
 
         .gradient-text {
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            background-image: linear-gradient(90deg, #000 0%, #666 100%);
+            background-image: linear-gradient(90deg, #000 0%, #444 100%);
         }
-
-        .roadshow-item {
-            transition: all 0.3s ease;
-        }
-        .roadshow-item:hover {
-            background-color: #18181b; /* zinc-900 */
-            transform: translateX(5px);
-        }
-
+        
         /* Checkbox */
         .custom-checkbox {
             appearance: none;
@@ -112,67 +117,51 @@
         }
         .custom-checkbox:checked::before { transform: scale(1); }
 
-        /* Map Animations */
-        .map-dot {
+        /* Canvas Overlay */
+        #heatmapContainer {
+            position: relative;
+            background-color: #000;
+            overflow: hidden;
+        }
+        #globalCanvas {
             position: absolute;
-            width: 12px;
-            height: 12px;
-            background-color: #2563eb;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px #2563eb;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 10;
         }
-        .map-ping {
+
+        /* Milestone Specifics */
+        .milestone-line {
+            position: relative;
+            padding-left: 24px;
+            border-left: 2px solid rgba(255,255,255,0.1);
+        }
+        .milestone-node {
             position: absolute;
+            left: -7px;
+            top: 4px;
             width: 12px;
             height: 12px;
-            background-color: #2563eb;
             border-radius: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9;
-            opacity: 0.5;
+            background: #000;
+            border: 2px solid #2563eb;
+            z-index: 10;
         }
-        .map-label {
-            position: absolute;
-            transform: translate(-50%, -150%);
-            background: rgba(0,0,0,0.8);
+        .nft-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
             font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
             font-family: 'Space Mono', monospace;
-            white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(4px);
-            z-index: 20;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .map-dot:hover + .map-label, .map-dot:hover ~ .map-label {
-            opacity: 1;
-        }
-        
-        .data-popup {
-            position: absolute;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(0, 0, 0, 0.9));
-            border: 1px solid #2563eb;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            z-index: 30;
-            pointer-events: none;
-            animation: popupFade 3s ease-out forwards;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-        }
-        
-        @keyframes popupFade {
-            0% { opacity: 0; transform: translateY(10px) scale(0.9); }
-            10% { opacity: 1; transform: translateY(0) scale(1); }
-            80% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-10px) scale(0.9); }
+            box-shadow: 0 0 10px rgba(37,99,235,0.5);
+            margin-top: 6px;
+            animation: glow 3s infinite;
         }
     </style>
 </head>
@@ -180,7 +169,7 @@
 <body id="mainBody" class="overflow-hidden bg-white text-black">
 
     <!-- 1. Compliance Modal -->
-    <div id="complianceModal" class="fixed inset-0 z-[100] bg-white/95 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500">
+    <div id="complianceModal" class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 transition-opacity duration-500">
         <div class="bg-white border border-gray-200 shadow-2xl rounded-2xl max-w-lg w-full p-8 md:p-12 relative">
             <div class="absolute top-6 right-6">
                 <button onclick="toggleLanguage()" class="text-xs font-mono border border-gray-200 px-3 py-1.5 rounded-full hover:bg-black hover:text-white transition-all uppercase flex items-center gap-2">
@@ -224,7 +213,7 @@
     </div>
 
     <!-- 2. Navbar -->
-    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
         <div class="px-6 md:px-8 py-4 flex justify-between items-center max-w-[1920px] mx-auto">
             <a href="#" class="flex items-center gap-3 group">
                 <div class="w-9 h-9 bg-black rounded-lg flex items-center justify-center text-white font-bold font-mono text-xl group-hover:scale-110 transition-transform">H</div>
@@ -249,7 +238,7 @@
 
                 <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100">
                     <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
-                    <span class="text-xs font-mono text-gray-500">AIF: $12.42</span>
+                    <span class="text-xs font-mono text-gray-500">AIF: $14.28</span>
                 </div>
                 
                 <button onclick="connectWallet()" id="walletBtn" class="bg-black text-white text-[13px] font-medium px-6 py-2.5 rounded-full hover:bg-zinc-800 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl">
@@ -265,7 +254,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             <div class="lg:col-span-7 space-y-8 animate-fade-in-up">
                 <div class="inline-flex items-center gap-2 border border-gray-200 rounded-full px-4 py-1.5 bg-white shadow-sm hover:shadow-md transition-shadow cursor-default">
-                    <span class="w-2 h-2 rounded-full bg-accent"></span>
+                    <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
                     <span class="text-[10px] uppercase tracking-widest font-mono font-bold text-gray-600">WEB3.0 CREATIVE ECONOMY</span>
                 </div>
                 
@@ -307,8 +296,8 @@
                             <div class="text-3xl font-bold font-mono">16</div>
                         </div>
                         <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors">
-                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_dividends">Total Dividends (AIF)</div>
-                            <div class="text-3xl font-bold font-mono text-success">48.2M</div>
+                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_dividends">Total Dividends</div>
+                            <div class="text-3xl font-bold font-mono text-green-600">48.2M</div>
                         </div>
                         <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors">
                             <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_compute">Compute Pool</div>
@@ -337,137 +326,77 @@
         </div>
     </header>
 
-    <!-- NEW SECTION: Global Heatmap -->
-    <section id="heatmap" class="py-20 bg-black text-white relative overflow-hidden border-t border-b border-gray-800">
+    <!-- 4. Global Heatmap (Expanded City List + Optimized UI Layout) -->
+    <section id="heatmap" class="h-[850px] bg-black text-white relative overflow-hidden border-t border-b border-gray-800 flex flex-col">
         <!-- Background Map Image -->
         <div class="absolute inset-0 opacity-40">
-            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" class="w-full h-full object-cover" alt="World Map Night">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" class="w-full h-full object-cover" alt="World Map">
         </div>
-        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
-        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')]"></div>
+        <div class="absolute inset-0 bg-black/70"></div>
 
-        <div class="max-w-[1920px] mx-auto px-6 md:px-8 relative z-10">
-            <div class="flex flex-col md:flex-row justify-between items-start mb-12">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                        <span class="text-xs font-mono text-accent uppercase tracking-widest">Live Mainnet Activity</span>
+        <!-- THE CANVAS LAYER -->
+        <canvas id="globalCanvas"></canvas>
+
+        <!-- UI Overlay -->
+        <div class="absolute inset-0 pointer-events-none flex flex-col p-8 max-w-[1920px] mx-auto w-full h-full z-20">
+            
+            <!-- Top Row: Title & Simulation (Left aligned) -->
+            <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                <div class="bg-black/60 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-2xl animate-fade-in-up max-w-lg">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-2 h-2 rounded-full bg-neonGreen animate-pulse"></span>
+                        <span class="text-xs font-mono text-neonGreen font-bold uppercase tracking-widest">Live Mainnet Activity</span>
                     </div>
-                    <h2 class="text-3xl md:text-5xl font-bold mb-4" data-i18n="map_title">Global Compute Heatmap</h2>
-                    <p class="text-gray-400 text-sm max-w-xl" data-i18n="map_desc">Real-time visualization of AIF injection and project growth across key creative hubs. Witness the explosion of AI cinema.</p>
+                    <h2 class="text-4xl font-bold mb-2 tracking-tight">Global Compute Heatmap</h2>
+                    <p class="text-gray-400 text-sm">
+                        Visualizing real-time AIF injection across 18+ creative hubs. 
+                        <span class="text-accent block mt-1">HKAIFM Node Network Online.</span>
+                    </p>
                 </div>
-                
-                <!-- Time Simulation Control -->
-                <div class="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-xl p-4 w-full md:w-auto mt-6 md:mt-0">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[10px] text-gray-500 uppercase">Industry Simulation</span>
-                        <span class="text-sm font-bold font-mono text-accent" id="simYear">2025 Q4</span>
-                    </div>
-                    <div class="w-full md:w-64 h-2 bg-zinc-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-accent animate-[width_10s_linear_infinite]" style="width: 20%"></div>
-                    </div>
-                    <div class="flex justify-between text-[10px] text-gray-600 mt-1 font-mono">
-                        <span>NOW</span>
-                        <span>2027</span>
-                    </div>
+
+                <!-- Sim Year (Top Center/Right) -->
+                <div class="bg-zinc-900/80 backdrop-blur-xl border border-accent/30 p-4 rounded-2xl text-center shadow-[0_0_30px_rgba(37,99,235,0.2)]">
+                    <div class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Simulation</div>
+                    <div class="text-3xl font-mono font-bold text-white tracking-tighter" id="yearTicker">2025</div>
+                    <div class="text-[10px] font-bold text-accent">Q4 PROJECTION</div>
                 </div>
             </div>
 
-            <!-- Map Container -->
-            <div class="relative w-full h-[500px] md:h-[600px] bg-zinc-900/30 rounded-3xl border border-white/10 shadow-2xl backdrop-blur-sm overflow-hidden" id="mapContainer">
+            <!-- UI LAYOUT FIX: Moved to Bottom Left / Bottom Center to avoid East Asia (Top Right) -->
+            <div class="mt-auto flex flex-col md:flex-row items-end gap-6 w-full">
                 
-                <!-- Map Interactions Layer -->
-                <div class="absolute inset-0" id="mapInteractions">
-                    <!-- Hotspots (Calculated roughly by % for responsiveness) -->
-                    
-                    <!-- New York (USA) -->
-                    <div class="absolute top-[28%] left-[27%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-ping animate-ping-slow"></div>
-                        <div class="map-label">NEW YORK<br><span class="text-accent">3 Projects</span></div>
-                    </div>
-
-                    <!-- Los Angeles (USA) -->
-                    <div class="absolute top-[32%] left-[18%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-ping animate-ping-slow"></div>
-                        <div class="map-label">HOLLYWOOD<br><span class="text-accent">High Activity</span></div>
-                    </div>
-
-                    <!-- London (Europe) -->
-                    <div class="absolute top-[24%] left-[48%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-ping animate-ping-slow"></div>
-                        <div class="map-label">LONDON<br><span class="text-accent">2 Projects</span></div>
-                    </div>
-
-                    <!-- Paris (Europe) -->
-                    <div class="absolute top-[27%] left-[50%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-label">PARIS<br><span class="text-accent">Art House</span></div>
-                    </div>
-
-                    <!-- Lagos (Africa) -->
-                    <div class="absolute top-[50%] left-[52%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-label">LAGOS<br><span class="text-accent">Emerging</span></div>
-                    </div>
-
-                    <!-- Dubai (Middle East) -->
-                    <div class="absolute top-[38%] left-[60%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-ping animate-ping-slow"></div>
-                        <div class="map-label">DUBAI<br><span class="text-accent">Capital Hub</span></div>
-                    </div>
-
-                    <!-- Seoul (Asia) -->
-                    <div class="absolute top-[32%] left-[83%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-ping animate-ping-slow"></div>
-                        <div class="map-label">SEOUL<br><span class="text-accent">K-AI Wave</span></div>
-                    </div>
-
-                    <!-- Tokyo (Asia) -->
-                    <div class="absolute top-[33%] left-[86%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-ping animate-ping-slow"></div>
-                        <div class="map-label">TOKYO<br><span class="text-accent">Anime Gen</span></div>
-                    </div>
-
-                    <!-- Bangkok (Asia) -->
-                    <div class="absolute top-[45%] left-[78%] group">
-                        <div class="map-dot animate-pulse"></div>
-                        <div class="map-label">BANGKOK<br><span class="text-accent">Creative</span></div>
-                    </div>
-
-                    <!-- Hong Kong (HQ) -->
-                    <div class="absolute top-[40%] left-[80%] z-20">
-                        <div class="w-4 h-4 bg-white rounded-full absolute -translate-x-1/2 -translate-y-1/2 shadow-[0_0_20px_white] animate-pulse"></div>
-                        <div class="absolute -translate-x-1/2 -translate-y-[180%] bg-white text-black font-bold px-3 py-1 rounded text-xs">HONG KONG (HQ)</div>
-                    </div>
+                <!-- Live Ticker (Bottom Left) -->
+                <div class="w-full md:w-80 space-y-2 pointer-events-none" id="liveTickerContainer">
+                    <!-- Ticker injected by JS -->
                 </div>
 
-                <!-- Floating Data Panels -->
-                <div class="absolute bottom-6 left-6 grid gap-4 pointer-events-none">
-                    <div class="bg-black/80 backdrop-blur border border-zinc-700 p-4 rounded-xl min-w-[200px]">
-                        <div class="text-[10px] text-gray-400 uppercase">Global AIF Inflow (24h)</div>
-                        <div class="text-2xl font-bold font-mono text-success" id="mapInflow">+$12.8M</div>
+                <!-- Stats Panel (Bottom Center) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl">
+                    <div class="bg-black/70 backdrop-blur border border-white/10 p-4 rounded-xl">
+                        <div class="text-[10px] text-gray-500 uppercase">Active Nodes</div>
+                        <div class="text-2xl font-mono font-bold text-white">14,205</div>
                     </div>
-                    <div class="bg-black/80 backdrop-blur border border-zinc-700 p-4 rounded-xl min-w-[200px]">
-                        <div class="text-[10px] text-gray-400 uppercase">Compute Power (T-FLOPS)</div>
-                        <div class="text-2xl font-bold font-mono text-accent" id="mapCompute">8,245</div>
+                    <div class="bg-black/70 backdrop-blur border border-white/10 p-4 rounded-xl">
+                        <div class="text-[10px] text-gray-500 uppercase">24h Volume</div>
+                        <div class="text-2xl font-mono font-bold text-neonYellow">$28.5M</div>
+                    </div>
+                    <div class="bg-black/70 backdrop-blur border border-white/10 p-4 rounded-xl">
+                        <div class="text-[10px] text-gray-500 uppercase">Active Cities</div>
+                        <div class="text-2xl font-mono font-bold text-accent">18</div>
+                    </div>
+                    <div class="bg-black/70 backdrop-blur border border-white/10 p-4 rounded-xl">
+                        <div class="text-[10px] text-gray-500 uppercase">Network Load</div>
+                        <div class="text-2xl font-mono font-bold text-neonGreen">92%</div>
                     </div>
                 </div>
-
-                <!-- Live Ticker Overlay -->
-                <div class="absolute top-6 right-6 w-64 space-y-2 pointer-events-none" id="liveTicker">
-                    <!-- Populated by JS -->
-                </div>
+                
+                <!-- Right Side Empty for Map Visibility -->
+                <div class="flex-1"></div>
             </div>
         </div>
     </section>
 
-    <!-- 4. Marketplace -->
+    <!-- 5. Marketplace -->
     <section id="marketplace" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50/50">
         <div class="flex flex-col md:flex-row justify-between items-end mb-12">
             <div>
@@ -478,26 +407,16 @@
             <div class="flex space-x-2 mt-6 md:mt-0 bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
                 <button class="px-6 py-2.5 rounded-lg bg-black text-white shadow-md text-sm font-bold transition-all whitespace-nowrap" data-i18n="tab_issuance">Issuance (Raising)</button>
                 <button class="px-6 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-500 transition-all whitespace-nowrap" data-i18n="tab_active">Active (Dividends)</button>
-                <button class="px-6 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-500 transition-all whitespace-nowrap" data-i18n="tab_secondary">Secondary Market</button>
             </div>
         </div>
 
-        <!-- Dynamic Grid Container -->
         <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- JavaScript will populate this -->
-        </div>
-
-        <div class="mt-20 text-center">
-            <div class="inline-block p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
-                <p class="text-gray-500 text-sm mb-3" data-i18n="creator_prompt">Are you an AI Film Creator?</p>
-                <a href="#creator" class="text-black font-bold border-b-2 border-black pb-0.5 hover:text-gray-600 transition-colors" data-i18n="creator_link">Go to Creator Studio (Submit Project)</a>
-            </div>
+            <!-- Populated by JS -->
         </div>
     </section>
 
-    <!-- 5. Roadshow Center -->
-    <section id="roadshows" class="py-24 bg-black text-white relative overflow-hidden">
-        <!-- Abstract Globe Lines -->
+    <!-- 6. Roadshow Center (Functional & Detailed) -->
+    <section id="roadshows" class="py-24 bg-black text-white relative overflow-hidden z-10">
         <div class="absolute inset-0 opacity-10 pointer-events-none">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -509,22 +428,16 @@
             </svg>
         </div>
 
-        <div class="max-w-[1920px] mx-auto px-6 md:px-8 relative z-10">
+        <div class="max-w-[1920px] mx-auto px-6 md:px-8 relative z-20">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/20 pb-8">
                 <div>
                     <h2 class="text-4xl font-bold mb-4" data-i18n="roadshow_title">Roadshow Center</h2>
                     <p class="text-gray-400 text-sm" data-i18n="roadshow_subtitle">Real World Connection. Meet the creators face-to-face.</p>
                 </div>
-                <div class="mt-6 md:mt-0 flex gap-4">
-                     <div class="flex items-center gap-2 text-xs font-mono text-accent">
-                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                        LIVE
-                    </div>
-                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 h-[600px]">
-                <!-- Featured Event Large -->
+                <!-- Featured Event -->
                 <div class="lg:col-span-2 relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl h-full group">
                     <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700 transform group-hover:scale-105" alt="Roadshow Event">
                     <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-8 md:p-12 flex flex-col justify-end pointer-events-none">
@@ -550,7 +463,7 @@
         </div>
     </section>
 
-    <!-- 6. Footer -->
+    <!-- 7. Footer -->
     <footer class="bg-white border-t border-gray-100 pt-20 pb-10 px-6 md:px-8">
         <div class="max-w-[1920px] mx-auto">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
@@ -567,12 +480,14 @@
                 </div>
                 
                 <div>
-                    <h4 class="font-bold text-sm mb-6 uppercase tracking-wider">Platform</h4>
-                    <ul class="space-y-4 text-sm text-gray-500">
-                        <li><a href="#heatmap" class="hover:text-black transition-colors">Global Heatmap</a></li>
-                        <li><a href="#marketplace" class="hover:text-black transition-colors">Marketplace</a></li>
-                        <li><a href="#" class="hover:text-black transition-colors">AIF Exchange</a></li>
-                        <li><a href="#roadshows" class="hover:text-black transition-colors">Roadshows</a></li>
+                    <h4 class="font-bold text-sm mb-6 uppercase tracking-wider">Ecosystem</h4>
+                    <ul class="space-y-4 text-sm text-gray-500 font-mono">
+                        <li><a href="http://www.hkaifa.academy" target="_blank" class="hover:text-accent transition-colors">HKAIFA - AI電影學院</a></li>
+                        <li><a href="http://www.hkaiiff.org" target="_blank" class="hover:text-accent transition-colors">HKAIIFF - AI國際電影節</a></li>
+                        <li><a href="http://www.aif.market" target="_blank" class="hover:text-accent transition-colors">AIF.Market - 資產市場</a></li>
+                        <li><a href="http://www.aif.exchange" target="_blank" class="hover:text-accent transition-colors">AIF.Exchange - 資產交易</a></li>
+                        <li><a href="http://www.aif.center" target="_blank" class="hover:text-accent transition-colors">AIF.Center - 服務中心</a></li>
+                        <li><a href="http://www.404.world" target="_blank" class="hover:text-accent transition-colors font-bold">404.world - 平行世界</a></li>
                     </ul>
                 </div>
 
@@ -594,11 +509,11 @@
         </div>
     </footer>
 
-    <!-- 7. Detailed Project Modal -->
-    <div id="projectModal" class="fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm hidden flex items-end md:items-center justify-center p-0 md:p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white md:rounded-3xl w-full max-w-6xl h-[90vh] md:h-[85vh] overflow-hidden shadow-2xl relative flex flex-col transform scale-95 transition-transform duration-300" id="modalContent">
+    <!-- 8. Detailed Project Modal (With Rate Fix) -->
+    <div id="projectModal" class="fixed inset-0 z-[150] bg-black/80 backdrop-blur-md hidden flex items-end md:items-center justify-center p-0 md:p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white md:rounded-3xl w-full max-w-6xl h-[95vh] md:h-[90vh] overflow-hidden shadow-2xl relative flex flex-col transform scale-95 transition-transform duration-300" id="modalContent">
             
-            <button onclick="closeProjectModal()" class="absolute top-6 right-6 w-10 h-10 bg-white/20 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-white hover:text-black z-20 transition-all">
+            <button onclick="closeProjectModal()" class="absolute top-6 right-6 w-10 h-10 bg-white/20 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-white hover:text-black z-20 transition-all border border-white/20">
                 <i class="fas fa-times"></i>
             </button>
 
@@ -606,92 +521,89 @@
             <div class="flex flex-col lg:flex-row h-full">
                 
                 <!-- Left: Visual & Key Info -->
-                <div class="lg:w-7/12 h-full overflow-y-auto custom-scrollbar bg-black text-white relative">
+                <div class="lg:w-7/12 h-full overflow-y-auto custom-scrollbar bg-zinc-950 text-white relative">
                     <!-- Dynamic Hero Image -->
                     <div class="h-96 w-full relative">
                         <img id="mImg" src="" class="w-full h-full object-cover opacity-70">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/50 to-transparent"></div>
                         <div class="absolute bottom-8 left-8">
                             <div class="flex gap-2 mb-3">
                                 <span class="px-3 py-1 bg-accent text-white text-xs font-bold rounded-full" id="mTag">Sci-Fi</span>
-                                <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full backdrop-blur-md" id="mStatus">Raising</span>
+                                <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full backdrop-blur-md border border-white/10" id="mStatus">Raising</span>
                             </div>
-                            <h2 class="text-4xl md:text-5xl font-bold mb-2" id="mTitle">Project Title</h2>
-                            <p class="text-gray-400 text-sm font-mono" id="mTokenName">$TOKEN</p>
+                            <h2 class="text-4xl md:text-5xl font-bold mb-2 tracking-tight" id="mTitle">Project Title</h2>
+                            <p class="text-gray-400 text-sm font-mono flex items-center gap-2">
+                                <span id="mTokenName">$TOKEN</span>
+                                <span class="text-xs bg-zinc-800 px-2 py-0.5 rounded text-gray-400">ERC-20</span>
+                            </p>
                         </div>
                     </div>
 
                     <div class="p-8 md:p-12 space-y-12">
                         <!-- Description -->
                         <div>
-                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-info-circle"></i> <span data-i18n="modal_overview">Overview</span></h3>
-                            <p class="text-gray-300 leading-relaxed text-sm md:text-base" id="mDesc">Description...</p>
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-white"><i class="fas fa-info-circle text-accent"></i> <span data-i18n="modal_overview">Overview</span></h3>
+                            <p class="text-gray-300 leading-relaxed text-sm md:text-base font-light" id="mDesc">Description...</p>
                         </div>
 
-                        <!-- Team -->
+                        <!-- Team (Detailed) -->
+                        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl">
+                            <h3 class="text-lg font-bold mb-3 flex items-center gap-2 text-white"><i class="fas fa-users text-accent"></i> <span data-i18n="modal_team">Team Background</span></h3>
+                            <p class="text-gray-400 text-sm leading-relaxed" id="mTeam">Team info...</p>
+                        </div>
+
+                        <!-- Milestones with NFT Badge -->
                         <div>
-                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-users"></i> <span data-i18n="modal_team">Team</span></h3>
-                            <div class="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
-                                <p class="text-gray-300 text-sm" id="mTeam">Team info...</p>
+                            <h3 class="text-xl font-bold mb-8 flex items-center gap-2 text-white"><i class="fas fa-flag-checkered text-accent"></i> <span data-i18n="modal_milestones">Roadmap & Milestones</span></h3>
+                            <div class="relative pl-4 space-y-10 milestone-line" id="mMilestones">
+                                <!-- Populated via JS with NFT badges -->
                             </div>
                         </div>
 
                         <!-- Tokenomics Visuals -->
                         <div>
-                            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-chart-pie"></i> <span data-i18n="modal_tokenomics">FilmToken Allocation</span></h3>
-                            
-                            <!-- Allocation Bar -->
-                            <div class="mb-8">
-                                <div class="flex justify-between text-xs text-gray-400 mb-2">
-                                    <span>Team (Locked)</span>
-                                    <span>Public (Fundraising)</span>
+                            <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-white"><i class="fas fa-chart-pie text-accent"></i> <span data-i18n="modal_tokenomics">FilmToken Allocation</span></h3>
+                            <div class="h-6 w-full bg-zinc-800 rounded-full overflow-hidden flex border border-zinc-700">
+                                <div class="w-[20%] h-full bg-zinc-600 border-r border-black relative group flex items-center justify-center hover:bg-zinc-500 transition-colors cursor-help">
+                                     <div class="text-[10px] font-bold text-white">TEAM 20%</div>
                                 </div>
-                                <div class="h-4 w-full bg-zinc-800 rounded-full overflow-hidden flex">
-                                    <div class="w-[20%] h-full bg-zinc-600 border-r border-black relative group">
-                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">20% Team Locked</div>
-                                    </div>
-                                    <div class="w-[80%] h-full bg-accent relative group">
-                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">80% Public Circulation</div>
-                                    </div>
+                                <div class="w-[80%] h-full bg-accent relative flex items-center justify-center hover:bg-blue-500 transition-colors cursor-help">
+                                    <div class="text-[10px] font-bold text-white">COMMUNITY / PRODUCTION 80%</div>
                                 </div>
                             </div>
-
-                            <!-- Usage Bar -->
-                            <div>
-                                <h4 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider" data-i18n="modal_usage">Use of Proceeds (AIF)</h4>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="p-4 bg-zinc-900 rounded-xl border-l-4 border-success">
-                                        <div class="text-2xl font-bold font-mono">70%</div>
-                                        <div class="text-xs text-gray-400 mt-1">Production (Model Token Burn)</div>
-                                    </div>
-                                    <div class="p-4 bg-zinc-900 rounded-xl border-l-4 border-warning">
-                                        <div class="text-2xl font-bold font-mono">30%</div>
-                                        <div class="text-xs text-gray-400 mt-1">AIF/FilmToken Liquidity</div>
-                                    </div>
+                            
+                            <!-- Use of Proceeds (Detailed) -->
+                            <div class="mt-6 grid grid-cols-2 gap-4">
+                                <div class="bg-zinc-900 p-4 rounded-lg border-l-2 border-neonGreen">
+                                    <div class="text-xs text-gray-500 uppercase tracking-widest">Production & AI Training</div>
+                                    <div class="text-xl font-mono font-bold mt-1">70%</div>
+                                    <div class="text-[10px] text-gray-600 mt-1">GPU Rental, Model Fine-tuning</div>
+                                </div>
+                                <div class="bg-zinc-900 p-4 rounded-lg border-l-2 border-neonYellow">
+                                    <div class="text-xs text-gray-500 uppercase tracking-widest">Liquidity & Marketing</div>
+                                    <div class="text-xl font-mono font-bold mt-1">30%</div>
+                                    <div class="text-[10px] text-gray-600 mt-1">DEX Listing, Global Roadshows</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Milestones & Safety Valve -->
-                        <div>
-                            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-flag-checkered"></i> <span data-i18n="modal_milestones">Milestones & NFT Rights</span></h3>
-                            <div class="relative border-l-2 border-zinc-800 pl-8 space-y-8" id="mMilestones">
-                                <!-- Populated by JS -->
+                        <!-- Safety Valve (Detailed) -->
+                        <div class="p-5 bg-red-950/30 border border-red-500/30 rounded-xl flex items-start gap-4">
+                            <div class="p-3 bg-red-500/10 rounded-full text-red-500">
+                                <i class="fas fa-shield-alt text-xl"></i>
                             </div>
-                            
-                            <div class="mt-8 p-4 bg-red-900/20 border border-red-900/50 rounded-xl flex items-start gap-4">
-                                <i class="fas fa-shield-alt text-red-500 mt-1"></i>
-                                <div>
-                                    <h4 class="text-red-400 font-bold text-sm" data-i18n="modal_safety">Safety Valve Mechanism</h4>
-                                    <p class="text-red-200/60 text-xs mt-1" id="mSafetyMsg">If no production milestone is met within 6 months, all unspent AIF is automatically refunded via Smart Contract.</p>
-                                </div>
+                            <div>
+                                <h4 class="text-red-400 font-bold text-sm" data-i18n="modal_safety">Safety Valve Mechanism (Smart Contract Audit: Passed)</h4>
+                                <p class="text-gray-400 text-xs mt-1 leading-relaxed">
+                                    This project utilizes the <span class="text-red-300 font-mono">HKAIFM-SAFE-v2</span> contract. If no verified production milestone is on-chain within 6 months of fund completion, all unspent AIF is automatically refunded to token holders pro-rata.
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right: Action Panel -->
-                <div class="lg:w-5/12 bg-gray-50 h-full flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200">
+                <div class="lg:w-5/12 bg-white h-full flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200">
                     <div class="p-8 md:p-10 flex-1 overflow-y-auto custom-scrollbar">
                         <div class="mb-8">
                             <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2" data-i18n="modal_status">Fundraising Status</span>
@@ -708,108 +620,115 @@
                             </div>
                         </div>
 
-                        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
-                            <h4 class="font-bold text-sm mb-4" data-i18n="modal_swap">Swap AIF for FilmToken</h4>
-                            
+                        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 mb-6 shadow-inner">
+                            <h4 class="font-bold text-sm mb-4 flex items-center gap-2">
+                                <i class="fas fa-sync-alt text-gray-400"></i>
+                                <span data-i18n="modal_swap">Swap AIF for FilmToken</span>
+                            </h4>
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 mb-1">You Pay (AIF)</label>
                                     <div class="relative">
-                                        <input type="number" id="investInput" placeholder="0.00" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-mono text-lg focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all">
-                                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:underline">MAX</button>
+                                        <input type="number" id="investInput" placeholder="0.00" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 font-mono text-lg focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all">
+                                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-accent bg-blue-50 px-2 py-1 rounded hover:bg-blue-100">MAX</button>
                                     </div>
-                                    <div class="text-xs text-gray-400 mt-1 text-right">Balance: <span id="mUserBal">---</span> AIF</div>
+                                    <div class="text-[10px] text-gray-400 mt-1 text-right">Balance: 14,280 AIF</div>
                                 </div>
-
-                                <div class="flex justify-center text-gray-400">
-                                    <i class="fas fa-arrow-down"></i>
-                                </div>
-
+                                <div class="flex justify-center text-gray-400"><i class="fas fa-arrow-down"></i></div>
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 mb-1">You Receive (<span id="mReceiveTicker">TOKEN</span>)</label>
                                     <input type="text" id="receiveOutput" placeholder="0.00" readonly class="w-full bg-gray-100 border border-transparent rounded-xl px-4 py-3 font-mono text-lg text-gray-500">
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="space-y-3 text-xs text-gray-500 border-t border-gray-200 pt-6">
-                            <div class="flex justify-between">
-                                <span>Exchange Rate</span>
-                                <span class="font-mono font-bold">1 AIF = <span id="mRate">10</span> <span id="mRateTicker">TOKEN</span></span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Network Fee</span>
-                                <span class="font-mono">0.05 AIF</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Slippage Tolerance</span>
-                                <span class="font-mono">0.5%</span>
+                            <!-- Exchange Rate Details Section -->
+                            <div class="mt-4 pt-4 border-t border-gray-200 space-y-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-gray-500">Exchange Rate</span>
+                                    <span class="font-mono font-bold">1 AIF = <span id="mExchangeRate">0</span> <span id="mExchangeTicker">TKN</span></span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-gray-500">Network Fee</span>
+                                    <span class="font-mono text-gray-700">0.05 AIF</span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-gray-500">Slippage Tolerance</span>
+                                    <span class="font-mono text-gray-700">0.5%</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-8 bg-white border-t border-gray-200 shadow-[0_-5px_20px_rgba(0,0,0,0.02)] z-10">
-                        <button onclick="simulateInvest()" id="investBtn" class="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-zinc-800 hover:-translate-y-0.5 active:translate-y-0 transition-all flex justify-center items-center gap-2">
+                    <div class="p-8 bg-white border-t border-gray-200 shadow-[0_-5px_30px_rgba(0,0,0,0.05)] z-10">
+                        <button onclick="simulateInvest()" id="investBtn" class="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-xl hover:bg-zinc-800 transition-all flex justify-center items-center gap-3 transform hover:-translate-y-1">
                             <span data-i18n="modal_btn_invest">Confirm Investment</span>
-                            <i class="fas fa-bolt text-warning"></i>
+                            <i class="fas fa-bolt text-neonYellow animate-pulse"></i>
                         </button>
-                        <p class="text-[10px] text-center text-gray-400 mt-3">
-                            By confirming, you agree to the <a href="#" class="underline">Token Purchase Agreement</a>.
-                        </p>
+                        <p class="text-[10px] text-center text-gray-400 mt-3">Gas fee ~0.002 AIF. By confirming, you agree to T&Cs.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 8. Roadshow Detail Modal -->
-    <div id="roadshowModal" class="fixed inset-0 z-[160] bg-zinc-950/90 backdrop-blur-md hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-black border border-zinc-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative transform scale-95 transition-transform duration-300" id="roadshowModalContent">
+    <!-- 9. Roadshow Detail Modal (Deeply Expanded & Functional) -->
+    <div id="roadshowModal" class="fixed inset-0 z-[160] bg-zinc-950/90 backdrop-blur-xl hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-black border border-zinc-800 rounded-3xl w-full max-w-4xl overflow-hidden shadow-2xl relative transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="roadshowModalContent">
             
-            <button onclick="closeRoadshowModal()" class="absolute top-4 right-4 w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center text-white hover:bg-zinc-700 transition-colors z-20">
+            <button onclick="closeRoadshowModal()" class="absolute top-4 right-4 w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center text-white hover:bg-zinc-700 transition-colors z-20 border border-zinc-700">
                 <i class="fas fa-times"></i>
             </button>
 
-            <div class="relative h-48 w-full">
-                <img id="rsImg" src="" class="w-full h-full object-cover opacity-60">
-                <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+            <!-- Header Image -->
+            <div class="relative h-48 w-full flex-shrink-0">
+                <img id="rsImg" src="" class="w-full h-full object-cover opacity-70">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
                 <div class="absolute bottom-6 left-8">
-                    <span class="px-2 py-1 bg-accent text-white text-[10px] font-bold rounded mb-2 inline-block">HKAIFM Roadshow</span>
-                    <h2 class="text-2xl font-bold text-white" id="rsCity">City</h2>
-                    <p class="text-gray-400 text-xs font-mono mt-1"><i class="fas fa-calendar-alt mr-1"></i> <span id="rsDate">Date</span> &bull; <i class="fas fa-map-pin mr-1"></i> <span id="rsLoc">Location</span></p>
+                    <span class="px-2 py-1 bg-accent text-white text-[10px] font-bold rounded mb-2 inline-block shadow-lg">HKAIFM GLOBAL TOUR</span>
+                    <h2 class="text-3xl font-bold text-white tracking-tight" id="rsTitle">Title</h2>
+                    <div class="flex items-center gap-4 text-gray-300 text-xs font-mono mt-2">
+                        <span><i class="fas fa-calendar-alt mr-1 text-accent"></i> <span id="rsDate">Date</span></span>
+                        <span><i class="fas fa-map-pin mr-1 text-accent"></i> <span id="rsLoc">Location</span></span>
+                    </div>
                 </div>
             </div>
 
-            <div class="p-8 text-white space-y-6">
-                <div>
-                    <h3 class="text-lg font-bold mb-2 text-white" id="rsTitle">Title</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed" id="rsDesc">Description...</p>
-                </div>
-
-                <div class="bg-zinc-900 rounded-xl p-5 border border-zinc-800">
-                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Agenda</h4>
-                    <ul class="space-y-4 text-sm" id="rsAgenda">
-                        <!-- Agenda Items -->
-                    </ul>
-                </div>
-
-                <div class="bg-zinc-900 rounded-xl p-5 border border-zinc-800">
-                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Presented Projects</h4>
-                    <div class="flex flex-wrap gap-2" id="rsProjects">
-                        <!-- Project Tags -->
+            <!-- Content Body -->
+            <div class="flex flex-col md:flex-row h-full overflow-hidden bg-black">
+                <!-- Left: Agenda & Info -->
+                <div class="w-full md:w-1/3 border-r border-zinc-800 p-6 overflow-y-auto custom-scrollbar">
+                    <div class="mb-6">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Theme</h3>
+                        <p class="text-gray-300 text-sm leading-6" id="rsDesc">Description...</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Event Agenda</h3>
+                        <ul class="space-y-4" id="rsAgenda">
+                            <!-- JS Populated -->
+                        </ul>
                     </div>
                 </div>
 
-                <button class="w-full bg-white text-black py-3 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors">
-                    Register for Event
-                </button>
+                <!-- Right: Project Pitching Schedule (5 Projects) -->
+                <div class="w-full md:w-2/3 p-6 overflow-y-auto custom-scrollbar bg-zinc-900/30">
+                    <h3 class="text-xs font-bold text-accent uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <i class="fas fa-broadcast-tower"></i> Project Pitching Schedule
+                    </h3>
+                    <div class="space-y-4" id="rsProjectsList">
+                        <!-- JS Populated: 5 Projects -->
+                    </div>
+                    
+                    <button class="w-full mt-8 bg-white text-black py-4 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                        Register for Event (Deposit 50 AIF)
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="fixed bottom-8 right-8 bg-black text-white px-6 py-4 rounded-xl shadow-2xl transform translate-y-32 transition-transform duration-500 z-[200] flex items-center gap-4">
-        <div class="w-8 h-8 rounded-full bg-success flex items-center justify-center text-black">
+    <div id="toast" class="fixed bottom-8 right-8 bg-zinc-900 border border-zinc-700 text-white px-6 py-4 rounded-xl shadow-2xl transform translate-y-32 transition-transform duration-500 z-[200] flex items-center gap-4">
+        <div class="w-8 h-8 rounded-full bg-success flex items-center justify-center text-black shadow-lg shadow-green-900/20">
             <i class="fas fa-check"></i>
         </div>
         <div>
@@ -820,508 +739,277 @@
 
     <!-- Data & Scripts -->
     <script>
-        // --- 1. Data Store (16 Projects + Translations) ---
-        
+        // --- 1. Data Store ---
         const translations = {
             en: {
-                nav_heatmap: "Live Heatmap",
-                nav_market: "Marketplace",
-                nav_roadshow: "Roadshows",
-                nav_creator: "Creator Studio",
-                nav_assets: "My Assets",
-                btn_connect: "Connect Wallet",
-                hero_title1: "Invest in the",
-                hero_title2: "Compute & Future",
-                hero_title3: "of AI Cinema.",
-                hero_desc: "HKAIFM enables you to directly participate in the AI film industry. Exchange AIF for FilmTokens, inject computing power into premium projects, and share box office dividends, copyright revenue, and peripheral rights.",
-                hero_cta_primary: "Explore Projects",
-                hero_cta_heatmap: "Global Heatmap",
-                hero_cta_secondary: "Roadshow Center",
-                stats_title: "Live Market Data",
-                stat_fundraising: "Fundraising",
-                stat_dividends: "Total Dividends (AIF)",
-                stat_compute: "Compute Pool",
-                stat_investors: "Investors",
-                balance_label: "Your Balance",
-                top_up: "Top Up AIF",
-                map_title: "Global Compute Heatmap",
-                map_desc: "Real-time visualization of AIF injection and project growth across key creative hubs. Witness the explosion of AI cinema.",
-                market_title: "Project Marketplace",
-                market_subtitle: "Browse 16 premium AI film projects currently raising computing power. Use AIF to mint FilmTokens and govern the future of content.",
-                tab_issuance: "Issuance (Raising)",
-                tab_active: "Active (Dividends)",
-                tab_secondary: "Secondary Market",
-                creator_prompt: "Are you an AI Film Creator?",
-                creator_link: "Go to Creator Studio (Submit Project)",
-                roadshow_title: "Roadshow Center",
-                roadshow_subtitle: "Real World Connection. Meet the creators face-to-face.",
-                map_label: "Global Tour 2026",
-                map_sub: "Select a city on the right to view agenda and RSVP.",
-                btn_rsvp: "RSVP Now",
-                featured_event_title: "HKAIFM Q1 Global Roadshow",
-                featured_event_desc: "Direct meetings with 5 top-tier AI film teams. Live demos, Q&A, and exclusive investment opportunities.",
-                footer_desc: "The world's first AI-Native Film Asset Allocation Platform. Turning compute into energy, and creativity into assets.",
-                compliance_title: "HKAIFM Access Disclaimer",
-                compliance_desc1: "You are about to enter the world's first AI Film Asset Allocation Platform.",
-                compliance_desc2: "This service is governed by Hong Kong laws and is NOT available to residents of Mainland China or the United States.",
-                compliance_check1: "I am NOT a resident of Mainland China / NOT a US Citizen.",
-                compliance_check2: "I understand the risks of digital asset investment and assume full responsibility.",
-                compliance_check3: "I have read and agree to the \"User Agreement\".",
-                compliance_btn: "Confirm & Enter Platform",
-                modal_overview: "Overview",
-                modal_team: "Team",
-                modal_tokenomics: "FilmToken Allocation",
-                modal_usage: "Use of Proceeds (AIF)",
-                modal_milestones: "Milestones & NFT Rights",
-                modal_safety: "Safety Valve Mechanism",
-                modal_status: "Fundraising Status",
-                modal_ends: "Ends in 12 days",
-                modal_swap: "Swap AIF for FilmToken",
-                modal_btn_invest: "Confirm Investment"
+                hero_title1: "Invest in the", hero_title2: "Compute & Future", hero_title3: "of AI Cinema.", 
+                hero_desc: "HKAIFM enables you to directly participate in the AI film industry. Exchange AIF for FilmTokens, inject computing power into premium projects, and share box office dividends.",
+                nav_heatmap: "Live Heatmap", nav_market: "Marketplace", nav_roadshow: "Roadshows", nav_creator: "Creator Studio", nav_assets: "My Assets", btn_connect: "Connect Wallet",
+                hero_cta_primary: "Explore Projects", hero_cta_heatmap: "Global Heatmap", stats_title: "Live Market Data", stat_fundraising: "Fundraising", stat_dividends: "Total Dividends", stat_compute: "Compute Pool", stat_investors: "Investors", balance_label: "Your Balance", top_up: "Top Up AIF",
+                market_title: "Project Marketplace", market_subtitle: "Browse 16 premium AI film projects currently raising computing power. Use AIF to mint FilmTokens and govern the future of content.", tab_issuance: "Issuance (Raising)", tab_active: "Active (Dividends)",
+                roadshow_title: "Roadshow Center", roadshow_subtitle: "Real World Connection. Meet the creators face-to-face.", featured_event_title: "HKAIFM Q1 Global Roadshow", featured_event_desc: "Direct meetings with 5 top-tier AI film teams.", btn_rsvp: "RSVP Now", footer_desc: "The world's first AI-Native Film Asset Allocation Platform.",
+                compliance_title: "HKAIFM Access Disclaimer", compliance_desc1: "You are about to enter the world's first AI Film Asset Allocation Platform.", compliance_desc2: "Not available to residents of Mainland China or the United States.", compliance_check1: "I am NOT a resident of Mainland China / NOT a US Citizen.", compliance_check2: "I understand the risks.", compliance_check3: "I agree to the User Agreement.", compliance_btn: "Confirm & Enter Platform",
+                modal_overview: "Overview", modal_team: "Team Background", modal_milestones: "Roadmap & Milestones", modal_tokenomics: "FilmToken Allocation", modal_safety: "Safety Valve Mechanism", modal_status: "Fundraising Status", modal_ends: "Ends in 12 days", modal_swap: "Swap AIF for FilmToken", modal_btn_invest: "Confirm Investment"
             },
             zh: {
-                nav_heatmap: "全球熱度",
-                nav_market: "投資市場",
-                nav_roadshow: "路演中心",
-                nav_creator: "創作者後台",
-                nav_assets: "我的資產",
-                btn_connect: "連接錢包",
-                hero_title1: "投資 AI 電影的",
-                hero_title2: "算力與未來",
-                hero_title3: "", 
-                hero_desc: "HKAIFM 讓您直接參與 AI 電影產業。使用 AIF 兌換 FilmToken，為優質項目注入算力能源，共享票房分紅、版權交易收益及周邊權益。",
-                hero_cta_primary: "瀏覽項目",
-                hero_cta_heatmap: "全球熱度地圖",
-                hero_cta_secondary: "路演中心",
-                stats_title: "市場實時數據",
-                stat_fundraising: "募資中項目",
-                stat_dividends: "累計分紅 (AIF)",
-                stat_compute: "算力池規模",
-                stat_investors: "活躍投資人",
-                balance_label: "AIF 餘額",
-                top_up: "充值 AIF",
-                map_title: "全球 AI 算力熱度地圖",
-                map_desc: "實時可視化 AIF 注入和全球創意中心的項目增長。見證 AI 電影產業的爆發。",
-                market_title: "項目市場",
-                market_subtitle: "瀏覽 16 個正在募集算力的頂級 AI 電影項目。用 AIF 鑄造 FilmToken，決定內容的未來。",
-                tab_issuance: "正在募資 (Issuance)",
-                tab_active: "分紅中 (Active)",
-                tab_secondary: "二級市場",
-                creator_prompt: "您是 AI 電影創作者？",
-                creator_link: "前往創作者後台 (發布項目)",
-                roadshow_title: "路演中心",
-                roadshow_subtitle: "Real World Connection. 與創作者面對面。",
-                map_label: "2026 全球巡迴",
-                map_sub: "點擊右側城市查看詳細議程與預約。",
-                btn_rsvp: "立即預約",
-                featured_event_title: "HKAIFM Q1 全球路演",
-                featured_event_desc: "與5個頂級AI電影團隊面對面交流。現場演示、問答環節及專屬投資機會。",
-                footer_desc: "全球首個 AI 原生電影資產配置平台。讓算力成為能源，讓創意成為資產。",
-                compliance_title: "HKAIFM 訪問聲明",
-                compliance_desc1: "您即將進入全球首個 AI 電影資產配置平台。",
-                compliance_desc2: "本服務受香港法律管轄，不向中國大陸及美國居民提供服務。",
-                compliance_check1: "本人非中國大陸居民 / 非美國公民。",
-                compliance_check2: "本人知悉數字資產投資風險，自願承擔。",
-                compliance_check3: "我已閱讀並同意《用戶協議》。",
-                compliance_btn: "確認並進入平台",
-                modal_overview: "項目概覽",
-                modal_team: "團隊背景",
-                modal_tokenomics: "FilmToken 分配模型",
-                modal_usage: "資金/算力用途 (AIF)",
-                modal_milestones: "里程碑與 NFT 確權",
-                modal_safety: "安全閥機制",
-                modal_status: "募資進度",
-                modal_ends: "12天後結束",
-                modal_swap: "AIF 兌換 FilmToken",
-                modal_btn_invest: "確認投資"
+                hero_title1: "投資 AI 電影的", hero_title2: "算力與未來", hero_title3: "", 
+                hero_desc: "HKAIFM 讓您直接參與 AI 電影產業。使用 AIF 兌換 FilmToken，為優質項目注入算力能源，共享票房分紅。",
+                nav_heatmap: "全球熱度", nav_market: "投資市場", nav_roadshow: "路演中心", nav_creator: "創作者後台", nav_assets: "我的資產", btn_connect: "連接錢包",
+                hero_cta_primary: "瀏覽項目", hero_cta_heatmap: "全球熱度地圖", stats_title: "市場實時數據", stat_fundraising: "募資中項目", stat_dividends: "累計分紅", stat_compute: "算力池規模", stat_investors: "活躍投資人", balance_label: "AIF 餘額", top_up: "充值 AIF",
+                market_title: "項目市場", market_subtitle: "瀏覽 16 個正在募集算力的頂級 AI 電影項目。", tab_issuance: "正在募資 (Issuance)", tab_active: "分紅中 (Active)",
+                roadshow_title: "路演中心", roadshow_subtitle: "Real World Connection. 與創作者面對面。", featured_event_title: "HKAIFM Q1 全球路演", featured_event_desc: "與5個頂級AI電影團隊面對面交流。", btn_rsvp: "立即預約", footer_desc: "全球首個 AI 原生電影資產配置平台。",
+                compliance_title: "HKAIFM 訪問聲明", compliance_desc1: "您即將進入全球首個 AI 電影資產配置平台。", compliance_desc2: "不向中國大陸及美國居民提供服務。", compliance_check1: "本人非中國大陸居民 / 非美國公民。", compliance_check2: "本人知悉數字資產投資風險。", compliance_check3: "我已閱讀並同意《用戶協議》。", compliance_btn: "確認並進入平台",
+                modal_overview: "項目概覽", modal_team: "團隊背景", modal_milestones: "發展路線圖", modal_tokenomics: "FilmToken 分配模型", modal_safety: "安全閥機制", modal_status: "募資進度", modal_ends: "12天後結束", modal_swap: "AIF 兌換 FilmToken", modal_btn_invest: "確認投資"
             }
         };
 
         const projects = [
-            {
-                id: 1,
-                title: "Neon Genesis: The Awakening",
-                token: "NEON",
-                genre: "Sci-Fi / Cyberpunk",
-                image: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1908&auto=format&fit=crop",
-                raised: 450000,
-                goal: 600000,
-                totalSupply: "10,000,000",
-                rate: 16.6,
-                desc_en: "A sprawling cyberpunk saga generated entirely by Unreal Engine 5 and custom LLMs. Set in Neo-HK 2099, it explores the first AI gaining consciousness.",
-                desc_zh: "一部完全由 Unreal Engine 5 和定製 LLM 生成的宏大賽博朋克史詩。故事背景設定在 2099 年的新香港，探索第一個獲得意識的 AI。",
-                team_en: "Led by ex-ILM VFX supervisors and top prompt engineers from Silicon Valley.",
-                team_zh: "由前工業光魔特效總監領銜，匯聚硅谷頂級提示詞工程師。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Script Generation & Concept NFT Mint", event_zh: "劇本生成 & 概念 NFT 鑄造" },
-                    { date: "2026 Q2", event_en: "Character Model Training Completed", event_zh: "角色模型訓練完成" },
-                    { date: "2026 Q3", event_en: "Global Premiere & Box Office Dividend", event_zh: "全球首映 & 票房分紅啟動" }
-                ]
-            },
-            {
-                id: 2,
-                title: "Echoes of Eternity",
-                token: "ECHO",
-                genre: "Documentary / AI",
-                image: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2070&auto=format&fit=crop",
-                raised: 120000,
-                goal: 300000,
-                totalSupply: "5,000,000",
-                rate: 16.6,
-                desc_en: "A deep dive into the history of human consciousness, reconstructed using AI to visualize lost historical events.",
-                desc_zh: "深入探索人類意識的歷史，利用 AI 重建並可視化失落的歷史事件。",
-                team_en: "Directed by award-winning documentary filmmaker Sarah Chen.",
-                team_zh: "由獲獎紀錄片導演 Sarah Chen 執導。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Historical Data Training", event_zh: "歷史數據訓練" },
-                    { date: "2026 Q3", event_en: "Feature Release", event_zh: "正片發布" }
-                ]
-            },
-            {
-                id: 3,
-                title: "Pixel Hearts: Virtual Idol",
-                token: "HEART",
-                genre: "Animation / Music",
-                image: "https://images.unsplash.com/photo-1632213702844-1e0615781374?q=80&w=2064&auto=format&fit=crop",
-                raised: 780000,
-                goal: 800000,
-                totalSupply: "100,000,000",
-                rate: 125,
-                desc_en: "Creating the world's first decentralized AI virtual idol group. Token holders vote on songs and outfits.",
-                desc_zh: "打造全球首個去中心化 AI 虛擬偶像團體。代幣持有者投票決定歌曲和服裝。",
-                team_en: "Tokyo-based team specializing in Vocaloid and AI voice synthesis.",
-                team_zh: "專注於 Vocaloid 和 AI 語音合成的東京團隊。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Debut Single Release", event_zh: "首張單曲發布" },
-                    { date: "2026 Q2", event_en: "VR Concert", event_zh: "VR 演唱會" }
-                ]
-            },
-            {
-                id: 4,
-                title: "The Silent Void",
-                token: "VOID",
-                genre: "Thriller / Horror",
-                image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1937&auto=format&fit=crop",
-                raised: 50000,
-                goal: 150000,
-                totalSupply: "3,000,000",
-                rate: 20,
-                desc_en: "An AI-generated horror movie that adapts to the viewer's fears using bio-feedback data.",
-                desc_zh: "一部 AI 生成的恐怖電影，能根據觀眾的生物反饋數據調整恐怖元素。",
-                team_en: "Psychologists and AI engineers collaboration.",
-                team_zh: "心理學家與 AI 工程師的跨界合作。",
-                milestones: [
-                    { date: "2026 Q2", event_en: "Bio-feedback App Launch", event_zh: "生物反饋 App 上線" }
-                ]
-            },
-            {
-                id: 5,
-                title: "Dynasty Reborn",
-                token: "DYNA",
-                genre: "Historical / Action",
-                image: "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?q=80&w=2070&auto=format&fit=crop",
-                raised: 200000,
-                goal: 500000,
-                totalSupply: "8,000,000",
-                rate: 16,
-                desc_en: "Restoring the grandeur of the Tang Dynasty using 3D Gaussian Splatting and AI architectural generation.",
-                desc_zh: "利用 3D Gaussian Splatting 和 AI 建築生成技術，重現大唐盛世的輝煌。",
-                team_en: "Beijing Cultural Heritage Lab.",
-                team_zh: "北京文化遺產實驗室。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Chang'an City Model Complete", event_zh: "長安城模型構建完成" }
-                ]
-            },
-            {
-                id: 6,
-                title: "Mars: The First Colony",
-                token: "MARS",
-                genre: "Sci-Fi / Simulation",
-                image: "https://images.unsplash.com/photo-1541873676-a18131494184?q=80&w=2036&auto=format&fit=crop",
-                raised: 300000,
-                goal: 1000000,
-                totalSupply: "20,000,000",
-                rate: 20,
-                desc_en: "A realistic simulation of Mars colonization. The script evolves based on real scientific data.",
-                desc_zh: "火星殖民的真實模擬。劇本根據真實的科學數據演變。",
-                team_en: "Advisors from NASA and SpaceX communities.",
-                team_zh: "來自 NASA 和 SpaceX 社區的顧問團隊。",
-                milestones: [
-                    { date: "2026 Q2", event_en: "Physics Engine Integration", event_zh: "物理引擎整合" }
-                ]
-            },
-            {
-                id: 7,
-                title: "Love Algorithm",
-                token: "LUV",
-                genre: "Romance / Interactive",
-                image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=1887&auto=format&fit=crop",
-                raised: 80000,
-                goal: 200000,
-                totalSupply: "4,000,000",
-                rate: 20,
-                desc_en: "An interactive dating movie where you choose the dialogue. Powered by real-time NLP.",
-                desc_zh: "一部互動式戀愛電影，由你選擇對話。由實時 NLP 技術驅動。",
-                team_en: "Indie game developers from Seoul.",
-                team_zh: "來自首爾的獨立遊戲開發者。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Beta Interaction Test", event_zh: "Beta 互動測試" }
-                ]
-            },
-            {
-                id: 8,
-                title: "Shadows of Gotham",
-                token: "BAT",
-                genre: "Fan-Film / Noir",
-                image: "https://images.unsplash.com/photo-1517771778436-39f5763f5270?q=80&w=1974&auto=format&fit=crop",
-                raised: 150000,
-                goal: 300000,
-                totalSupply: "6,000,000",
-                rate: 20,
-                desc_en: "A noir detective story generated in the style of 1940s comics.",
-                desc_zh: "一部以 1940 年代漫畫風格生成的黑色偵探故事。",
-                team_en: "Community driven fan club.",
-                team_zh: "社區驅動的粉絲俱樂部。",
-                milestones: [
-                    { date: "2026 Q3", event_en: "Style Transfer Model Finalized", event_zh: "風格遷移模型定稿" }
-                ]
-            },
-            {
-                id: 9,
-                title: "The Alchemist's Dream",
-                token: "GOLD",
-                genre: "Fantasy",
-                image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1868&auto=format&fit=crop",
-                raised: 220000,
-                goal: 400000,
-                totalSupply: "8,000,000",
-                rate: 20,
-                desc_en: "High fantasy world building. AI generates new creatures and magic spells daily.",
-                desc_zh: "高魔奇幻世界構建。AI 每天生成新的生物和魔法咒語。",
-                team_en: "Weta Workshop alumni.",
-                team_zh: "維塔工作室前成員。",
-                milestones: [
-                    { date: "2026 Q2", event_en: "Creature Codex NFT Drop", event_zh: "生物圖鑑 NFT 空投" }
-                ]
-            },
-            {
-                id: 10,
-                title: "Deep Blue Mystery",
-                token: "BLUE",
-                genre: "Mystery / Ocean",
-                image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2070&auto=format&fit=crop",
-                raised: 90000,
-                goal: 250000,
-                totalSupply: "5,000,000",
-                rate: 20,
-                desc_en: "Solving crimes in an underwater city. Visuals generated using fluid dynamics AI.",
-                desc_zh: "在水下城市破案。視覺效果使用流體動力學 AI 生成。",
-                team_en: "Oceanography enthusiasts and CGI artists.",
-                team_zh: "海洋學愛好者和 CGI 藝術家。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Environment Render", event_zh: "環境渲染完成" }
-                ]
-            },
-            {
-                id: 11,
-                title: "Abstract Minds",
-                token: "MIND",
-                genre: "Art House",
-                image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop",
-                raised: 30000,
-                goal: 100000,
-                totalSupply: "1,000,000",
-                rate: 10,
-                desc_en: "Visualizing thoughts and dreams. A non-narrative audio-visual experience.",
-                desc_zh: "將思想和夢境可視化。非敘事性的視聽體驗。",
-                team_en: "Avant-garde AI artists collective.",
-                team_zh: "先鋒 AI 藝術家集體。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Gallery Exhibition", event_zh: "畫廊展覽" }
-                ]
-            },
-            {
-                id: 12,
-                title: "Cyber Vigilante",
-                token: "JUST",
-                genre: "Action",
-                image: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070&auto=format&fit=crop",
-                raised: 350000,
-                goal: 700000,
-                totalSupply: "14,000,000",
-                rate: 20,
-                desc_en: "High octane action sequences choreographed by AI.",
-                desc_zh: "由 AI 編排的高燃動作場面。",
-                team_en: "Action choreographers and stunt coordinators.",
-                team_zh: "動作指導和特技協調員。",
-                milestones: [
-                    { date: "2026 Q2", event_en: "Action Pre-viz", event_zh: "動作預演" }
-                ]
-            },
-            {
-                id: 13,
-                title: "Laugh Track 3000",
-                token: "LOL",
-                genre: "Comedy",
-                image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop",
-                raised: 180000,
-                goal: 400000,
-                totalSupply: "8,000,000",
-                rate: 20,
-                desc_en: "An infinite sitcom that never ends, generating jokes based on current news.",
-                desc_zh: "一部永不結束的無限情景喜劇，根據當前新聞生成笑話。",
-                team_en: "Comedy writers and LLM fine-tuners.",
-                team_zh: "喜劇作家和 LLM 微調師。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Pilot Episode Live Stream", event_zh: "試播集直播" }
-                ]
-            },
-            {
-                id: 14,
-                title: "Sonic Visions",
-                token: "SONIC",
-                genre: "Music Video",
-                image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop",
-                raised: 60000,
-                goal: 120000,
-                totalSupply: "2,000,000",
-                rate: 16.6,
-                desc_en: "Visualizing music albums using AI video generation.",
-                desc_zh: "利用 AI 視頻生成技術將音樂專輯可視化。",
-                team_en: "Indie Musicians DAO.",
-                team_zh: "獨立音樂人 DAO。",
-                milestones: [
-                    { date: "2026 Q2", event_en: "Album Launch", event_zh: "專輯發布" }
-                ]
-            },
-            {
-                id: 15,
-                title: "Micro-Stories Anthology",
-                token: "TINY",
-                genre: "Anthology",
-                image: "https://images.unsplash.com/photo-1519791883288-dc8bd696e667?q=80&w=2070&auto=format&fit=crop",
-                raised: 95000,
-                goal: 200000,
-                totalSupply: "4,000,000",
-                rate: 20,
-                desc_en: "A collection of 100 AI generated short films, each 1 minute long.",
-                desc_zh: "100 部 AI 生成的短片合集，每部 1 分鐘。",
-                team_en: "Short film festival curators.",
-                team_zh: "短片電影節策展人。",
-                milestones: [
-                    { date: "2026 Q1", event_en: "Selection Process", event_zh: "選片流程" }
-                ]
-            },
-            {
-                id: 16,
-                title: "The Infinite Narrative",
-                token: "INF",
-                genre: "Experimental",
-                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
-                raised: 110000,
-                goal: 300000,
-                totalSupply: "6,000,000",
-                rate: 20,
-                desc_en: "A story that changes every time you watch it.",
-                desc_zh: "每次觀看都會改變的故事。",
-                team_en: "Generative AI Researchers.",
-                team_zh: "生成式 AI 研究員。",
-                milestones: [
-                    { date: "2026 Q3", event_en: "Engine Release", event_zh: "引擎發布" }
-                ]
-            }
+            { id: 1, title: "Neon Genesis", token: "NEON", genre: "Sci-Fi", image: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1908&auto=format&fit=crop", raised: 450000, goal: 600000, rate: 16.6, desc_en: "A sprawling cyberpunk saga generated entirely by Unreal Engine 5 and custom LLMs. Set in Neo-HK 2099.", desc_zh: "一部完全由 UE5 和定製 LLM 生成的宏大賽博朋克史詩。故事背景設定在 2099 年的新香港。", team_en: "Led by ex-ILM VFX supervisors.", team_zh: "由前工業光魔特效總監領銜。" },
+            { id: 2, title: "Echoes of Eternity", token: "ECHO", genre: "Documentary", image: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2070&auto=format&fit=crop", raised: 120000, goal: 300000, rate: 16.6, desc_en: "Visualizing lost history with AI to reconstruct ancient civilizations.", desc_zh: "利用 AI 重建並可視化失落的文明。", team_en: "National Geo filmmakers.", team_zh: "國家地理攝影團隊。" },
+            { id: 3, title: "Pixel Hearts", token: "HEART", genre: "Animation", image: "https://images.unsplash.com/photo-1632213702844-1e0615781374?q=80&w=2064&auto=format&fit=crop", raised: 780000, goal: 800000, rate: 125, desc_en: "First decentralized virtual idol group governed by DAO votes.", desc_zh: "首個由 DAO 投票管理的去中心化虛擬偶像團體。", team_en: "Tokyo Vocaloid Team.", team_zh: "東京 Vocaloid 團隊。" },
+            { id: 4, title: "The Silent Void", token: "VOID", genre: "Horror", image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1937&auto=format&fit=crop", raised: 50000, goal: 150000, rate: 20, desc_en: "AI horror that adapts scenes based on viewer bio-feedback.", desc_zh: "根據觀眾生物反饋調整場景的 AI 恐怖片。", team_en: "Psychologists & AI Engineers.", team_zh: "心理學家與 AI 工程師。" },
+            { id: 5, title: "Dynasty Reborn", token: "DYNA", genre: "Historical", image: "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?q=80&w=2070&auto=format&fit=crop", raised: 200000, goal: 500000, rate: 16, desc_en: "Restoring the Tang Dynasty using 3D Gaussian Splatting.", desc_zh: "利用 3D Gaussian Splatting 重現大唐。", team_en: "Beijing Cultural Heritage Lab.", team_zh: "北京文化遺產實驗室。" },
+            { id: 6, title: "Mars Colony", token: "MARS", genre: "Sci-Fi", image: "https://images.unsplash.com/photo-1541873676-a18131494184?q=80&w=2036&auto=format&fit=crop", raised: 300000, goal: 1000000, rate: 20, desc_en: "Realistic simulation of the first human colony on Mars.", desc_zh: "人類首個火星殖民地的真實模擬。", team_en: "SpaceX Advisors.", team_zh: "SpaceX 顧問。" },
+            { id: 7, title: "Love Algorithm", token: "LUV", genre: "Romance", image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=1887&auto=format&fit=crop", raised: 80000, goal: 200000, rate: 20, desc_en: "Interactive dating movie driven by NLP engine.", desc_zh: "由 NLP 引擎驅動的互動式戀愛電影。", team_en: "Seoul Indie Devs.", team_zh: "首爾獨立開發者。" },
+            { id: 8, title: "Gotham Shadows", token: "BAT", genre: "Noir", image: "https://images.unsplash.com/photo-1517771778436-39f5763f5270?q=80&w=1974&auto=format&fit=crop", raised: 150000, goal: 300000, rate: 20, desc_en: "1940s style noir detective story generated by AI.", desc_zh: "AI 生成的 1940 年代黑色偵探故事。", team_en: "DC Fan Community.", team_zh: "DC 粉絲社區。" },
+            { id: 9, title: "Alchemist's Dream", token: "GOLD", genre: "Fantasy", image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1868&auto=format&fit=crop", raised: 220000, goal: 400000, rate: 20, desc_en: "High fantasy world building with generative creatures.", desc_zh: "擁有生成式生物的高魔奇幻世界構建。", team_en: "Weta Alumni.", team_zh: "維塔前成員。" },
+            { id: 10, title: "Deep Blue", token: "BLUE", genre: "Mystery", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2070&auto=format&fit=crop", raised: 90000, goal: 250000, rate: 20, desc_en: "Murder mystery set in an underwater city.", desc_zh: "發生在水下城市的謀殺懸疑片。", team_en: "Oceanographers.", team_zh: "海洋學家。" },
+            { id: 11, title: "Abstract Minds", token: "MIND", genre: "Art House", image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop", raised: 30000, goal: 100000, rate: 10, desc_en: "Visualizing human subconscious thoughts.", desc_zh: "可視化人類潛意識思想。", team_en: "Avant-garde Artists.", team_zh: "先鋒藝術家。" },
+            { id: 12, title: "Cyber Vigilante", token: "JUST", genre: "Action", image: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070&auto=format&fit=crop", raised: 350000, goal: 700000, rate: 20, desc_en: "High-octane action sequences choreographed by AI.", desc_zh: "由 AI 編排的高燃動作場面。", team_en: "Stunt Coordinators.", team_zh: "特技協調員。" },
+            { id: 13, title: "Laugh Track", token: "LOL", genre: "Comedy", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop", raised: 180000, goal: 400000, rate: 20, desc_en: "Infinite sitcom that generates jokes on current events.", desc_zh: "根據時事生成笑話的無限情景喜劇。", team_en: "Comedy Writers.", team_zh: "喜劇編劇。" },
+            { id: 14, title: "Sonic Visions", token: "SONIC", genre: "Music", image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop", raised: 60000, goal: 120000, rate: 16.6, desc_en: "Full album visualization using reactive audio AI.", desc_zh: "使用反應音頻 AI 進行全專輯可視化。", team_en: "Musicians DAO.", team_zh: "音樂人 DAO。" },
+            { id: 15, title: "Micro-Stories", token: "TINY", genre: "Anthology", image: "https://images.unsplash.com/photo-1519791883288-dc8bd696e667?q=80&w=2070&auto=format&fit=crop", raised: 95000, goal: 200000, rate: 20, desc_en: "100 AI generated short films, 1 minute each.", desc_zh: "100 部 AI 生成的短片，每部 1 分鐘。", team_en: "Sundance Curators.", team_zh: "聖丹斯策展人。" },
+            { id: 16, title: "Infinite Narrative", token: "INF", genre: "Exp", image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop", raised: 110000, goal: 300000, rate: 20, desc_en: "A story that changes plot every time you watch.", desc_zh: "每次觀看情節都會改變的故事。", team_en: "GenAI Research Lab.", team_zh: "生成式 AI 研究實驗室。" }
         ];
 
+        // Deeply Detailed Roadshow Data (Modified with 5 distinct projects per city)
         const roadshows = [
-            { 
-                city: "Hong Kong", date: "Dec 20, 2025", location: "K11 Musea", 
-                title_en: "HKAIFM Genesis Launch", title_zh: "HKAIFM 創世發布會",
-                image: "https://images.unsplash.com/photo-1506318137071-a8bcbf6b925d?q=80&w=1932&auto=format&fit=crop",
-                desc_en: "The inaugural launch event for HKAIFM. Join us as we unveil the first batch of AI-native film projects. Exclusive networking with the platform founders.",
-                desc_zh: "HKAIFM 的首次發布活動。與我們一起見證首批 AI 原生電影項目的揭幕。與平台創始人獨家交流。",
-                agenda: ["14:00 - Registration", "14:30 - Keynote: The Future of AI Cinema", "15:30 - Project Demos", "17:00 - Networking Mixer"],
-                projects: ["Neon Genesis", "Echoes of Eternity"]
-            },
-            { 
-                city: "Singapore", date: "Jan 15, 2026", location: "Marina Bay Sands", 
-                title_en: "Singapore Roadshow: Pixel Hearts Live", title_zh: "新加坡路演：Pixel Hearts 現場",
-                image: "https://images.unsplash.com/photo-1565967568715-22368297a72b?q=80&w=2070&auto=format&fit=crop",
-                desc_en: "Connecting the SE Asia film community with AI technology. Featuring live demonstration of Pixel Hearts virtual idol technology.",
-                desc_zh: "連接東南亞電影社區與 AI 技術。現場演示 Pixel Hearts 虛擬偶像技術。",
-                agenda: ["10:00 - Opening Ceremony", "11:00 - Demo: Real-time MoCap", "14:00 - Investor Pitching", "16:00 - Private Meeting"],
-                projects: ["Pixel Hearts", "Love Algorithm"]
-            },
-            { 
-                city: "Tokyo", date: "Feb 02, 2026", location: "Roppongi Hills", 
-                title_en: "Tokyo Demo Day: Micro-Stories", title_zh: "東京演示日：微故事系列",
-                image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1887&auto=format&fit=crop",
-                desc_en: "A deep dive into the 'Micro-Stories Anthology'. Experience the VR concert capabilities live.",
-                desc_zh: "深入了解“微故事合集”。現場體驗 VR 內容生成。",
-                agenda: ["18:00 - VR Setup", "19:00 - Live Generation", "20:00 - Q&A with Developers"],
-                projects: ["Pixel Hearts", "Micro-Stories Anthology"]
-            },
-            { 
-                city: "New York", date: "Feb 28, 2026", location: "Javits Center", 
-                title_en: "NYC Roadshow: Shadows of Gotham Team Meet", title_zh: "紐約路演：Shadows of Gotham 團隊見面會",
-                image: "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?q=80&w=2070&auto=format&fit=crop",
-                desc_en: "Meet the creators behind the noir detective story. Exclusive preview of the style transfer model.",
-                desc_zh: "與黑色偵探故事背後的創作者見面。獨家預覽風格遷移模型。",
-                agenda: ["13:00 - Director Presentation", "15:00 - Project: Shadows of Gotham", "17:00 - Cocktails"],
-                projects: ["Shadows of Gotham", "Laugh Track 3000"]
-            },
-            { 
-                city: "London", date: "Mar 10, 2026", location: "BFI Southbank", 
-                title_en: "London Premiere Roadshow: Deep Blue Mystery", title_zh: "倫敦首映路演：Deep Blue Mystery",
-                image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop",
-                desc_en: "World premiere of the first act of Deep Blue Mystery. Director Q&A and fluid dynamics tech demo.",
-                desc_zh: "Deep Blue Mystery 第一幕全球首映。導演問答與流體動力學技術演示。",
-                agenda: ["09:00 - Tech Setup", "11:00 - Premiere Screening", "14:00 - Investor 1-on-1"],
-                projects: ["Deep Blue Mystery", "Abstract Minds"]
-            },
-            { 
-                city: "Dubai", date: "Mar 25, 2026", location: "Museum of the Future", 
-                title_en: "Dubai Investment Roadshow: Dynasty Reborn", title_zh: "迪拜投資路演：Dynasty Reborn",
-                image: "https://images.unsplash.com/photo-1512453979798-5ea904ac6605?q=80&w=2070&auto=format&fit=crop",
-                desc_en: "Showcasing 'Dynasty Reborn' and the potential of historical reconstruction via AI. Exclusive asset auction.",
-                desc_zh: "展示“Dynasty Reborn”以及 AI 在歷史重建方面的潛力。獨家資產拍賣。",
-                agenda: ["15:00 - Historical AI Tech", "16:30 - Dynasty Reborn Premiere", "19:00 - Gala Dinner"],
-                projects: ["Dynasty Reborn", "Sonic Visions"]
-            },
-            { 
-                city: "Seoul", date: "Apr 05, 2026", location: "DDP", 
-                title_en: "Seoul Roadshow: Love Algorithm Cast Meeting", title_zh: "首爾路演：Love Algorithm 演員見面會",
-                image: "https://images.unsplash.com/photo-1538485399081-7191377e8241?q=80&w=1974&auto=format&fit=crop",
-                desc_en: "Meet the digital human cast of Love Algorithm. Live interactive script demo.",
-                desc_zh: "與 Love Algorithm 的數字人演員見面。現場互動劇本演示。",
-                agenda: ["10:00 - K-Drama AI Tools", "13:00 - Interactive Scripting Demo", "15:00 - Casting Call"],
-                projects: ["Love Algorithm", "The Silent Void"]
-            },
-            { 
-                city: "Paris", date: "Apr 20, 2026", location: "La Cinémathèque", 
-                title_en: "Paris Director Roadshow: The Infinite Narrative", title_zh: "巴黎導演路演：The Infinite Narrative",
-                image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
-                desc_en: "An experimental evening featuring avant-garde AI art films and director Q&A.",
-                desc_zh: "以前衛 AI 藝術電影為特色的實驗之夜及導演問答。",
-                agenda: ["18:00 - Art Installation", "19:30 - Screening: The Infinite Narrative", "21:00 - Director Q&A"],
-                projects: ["The Infinite Narrative", "Abstract Minds"]
-            }
+             { 
+                 city: "Hong Kong", 
+                 date: "Dec 20, 2025", 
+                 location: "K11 Musea Art House", 
+                 title_en: "HKAIFM Genesis Launch", 
+                 title_zh: "HKAIFM 創世發布會", 
+                 image: "https://images.unsplash.com/photo-1506318137071-a8bcbf6b925d?q=80&w=1932&auto=format&fit=crop", 
+                 desc_en: "The inaugural launch event for HKAIFM. Join us as we unveil the first batch of AI-native film projects. Theme: 'From Compute to Culture'.", 
+                 desc_zh: "HKAIFM 的首次發布活動。主題：“從算力到文化”。將有5個頂級團隊進行現場演示。", 
+                 agenda: ["14:00 - Registration", "14:30 - Keynote", "15:15 - Project Pitching", "17:00 - Networking"],
+                 pitching: [
+                     { time: "15:15", name: "Neon Genesis (霓虹創世)", team: "CyberCore Ltd.", desc: "Cyberpunk saga powered by UE5. Exploring the future of Neo-HK.", content: "Full trailer reveal + Live Character Interaction demo." },
+                     { time: "15:35", name: "Echoes of Eternity (永恆回聲)", team: "HistoryAI", desc: "Reconstructing lost civilizations.", content: "Documentary footage generated from historical texts." },
+                     { time: "15:55", name: "Urban Legends (都市傳說)", team: "HK Horror Collective", desc: "AR-integrated horror experience.", content: "Interactive AR session with audience mobile devices." },
+                     { time: "16:15", name: "Taste of Memories (記憶之味)", team: "Wong Kar-AI", desc: "Nostalgic romance generator.", content: "Mood transfer algorithm demonstration." },
+                     { time: "16:35", name: "FinTech Thriller (金融風暴)", team: "Central Studio", desc: "Data-driven financial drama.", content: "Real-time stock market data visualization as film backdrop." }
+                 ]
+             },
+             { 
+                 city: "Singapore", 
+                 date: "Jan 15, 2026", 
+                 location: "Marina Bay Sands Expo", 
+                 title_en: "Singapore Roadshow: The Tokenized Film", 
+                 title_zh: "新加坡路演：代幣化電影", 
+                 image: "https://images.unsplash.com/photo-1565967568715-22368297a72b?q=80&w=2070&auto=format&fit=crop", 
+                 desc_en: "Connecting the SE Asia crypto capital with AI creatives. Focusing on DeFi integration in film financing.", 
+                 desc_zh: "連接東南亞加密資本與 AI 創意。專注於電影融資中的 DeFi 整合。", 
+                 agenda: ["10:00 - Opening", "10:30 - Tech Demo", "14:00 - Pitch Session", "16:00 - Closing"],
+                 pitching: [
+                     { time: "14:00", name: "Pixel Hearts (像素之心)", team: "Vocaloid Pro", desc: "Decentralized virtual idol group.", content: "Live concert hologram performance." },
+                     { time: "14:20", name: "Love Algorithm (戀愛算法)", team: "Dating Sim X", desc: "Interactive romance movie.", content: "Audience choice mechanism showcase." },
+                     { time: "14:40", name: "Jungle Code (叢林法則)", team: "Tropics AI", desc: "Survival thriller set in digital rainforest.", content: "Procedural environment generation tech talk." },
+                     { time: "15:00", name: "Future Lion (未來獅城)", team: "Merlion Studios", desc: "Sci-fi animation about Singapore 2050.", content: "Architectural visualization of future cities." },
+                     { time: "15:20", name: "Crypto Heist (加密大盜)", team: "BlockFilm", desc: "Action movie funded by smart contracts.", content: "Smart contract audit report & action sequence preview." }
+                 ]
+             },
+             { 
+                 city: "Tokyo", 
+                 date: "Feb 02, 2026", 
+                 location: "Roppongi Hills Academy", 
+                 title_en: "Tokyo Demo Day: Anime & AI", 
+                 title_zh: "東京演示日：動漫與 AI", 
+                 image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1887&auto=format&fit=crop", 
+                 desc_en: "Exploring the intersection of traditional anime production and generative AI tools.", 
+                 desc_zh: "探索傳統動漫製作與生成式 AI 工具的交匯點。", 
+                 agenda: ["18:00 - VR Setup", "18:30 - Fireside Chat", "19:30 - Live Generation", "20:30 - Afterparty"],
+                 pitching: [
+                     { time: "19:30", name: "Micro-Stories (微物語)", team: "Shorts Lab", desc: "100 AI generated short films.", content: "Rapid-fire screening of 10 selected shorts." },
+                     { time: "19:45", name: "Sonic Visions (音速幻象)", team: "Shibuya Beats", desc: "Music album visualization.", content: "Audio-reactive generative art installation." },
+                     { time: "20:00", name: "Mecha Soul (機甲之魂)", team: "Gundam AI Fan Club", desc: "Generative mecha battle series.", content: "3D model viewer and battle simulation." },
+                     { time: "20:15", name: "Ghost in the Code (代碼幽靈)", team: "Cyberpunk JP", desc: "Philosophical sci-fi noir.", content: "Screenplay generation logic explanation." },
+                     { time: "20:30", name: "Kawaii Chaos (可愛混沌)", team: "Harajuku Gen", desc: "Psychedelic pop-art animation.", content: "Style transfer filter experience." }
+                 ]
+             }
         ];
 
-        // --- 2. State Management ---
-        let currentLang = 'en'; // Default English
+        const milestonesData = [
+            { date: "2025 Q4", title: "Global Fundraising", desc: "Initial AIF injection from 20+ countries." },
+            { date: "2026 Q1", title: "AI Model Training", desc: "Characters & Environments generation." },
+            { date: "2026 Q2", title: "Trailer NFT Drop", desc: "Holder exclusive access & governance vote." },
+            { date: "2026 Q3", title: "Global Premiere", desc: "Simultaneous release in VR & Theaters." },
+            { date: "2027 Q1", title: "Dividend Payout", desc: "Smart contract executes box office split." }
+        ];
+
+        let currentLang = 'en';
         let isConnected = false;
 
-        // --- 3. Render Functions ---
+        // --- CANVAS ANIMATION LOGIC (Refined & Expanded City List) ---
+        const canvas = document.getElementById('globalCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        // EXPANDED CITY DATA
+        const cities = [
+            { name_en: "Hong Kong", name_zh: "香港", x: 0.81, y: 0.45, color: "#2563eb" }, 
+            { name_en: "New York", name_zh: "紐約", x: 0.28, y: 0.32, color: "#d946ef" },  
+            { name_en: "London", name_zh: "倫敦", x: 0.48, y: 0.26, color: "#f59e0b" },    
+            { name_en: "Tokyo", name_zh: "東京", x: 0.88, y: 0.35, color: "#10b981" },     
+            { name_en: "Seoul", name_zh: "首爾", x: 0.84, y: 0.34, color: "#f43f5e" },     
+            { name_en: "Los Angeles", name_zh: "洛杉磯", x: 0.15, y: 0.35, color: "#8b5cf6" }, 
+            { name_en: "Silicon Valley", name_zh: "硅谷", x: 0.14, y: 0.33, color: "#06b6d4" }, // San Jose
+            { name_en: "Vancouver", name_zh: "溫哥華", x: 0.14, y: 0.25, color: "#22c55e" },
+            { name_en: "Mumbai", name_zh: "孟買", x: 0.68, y: 0.45, color: "#d946ef" }, // Bollywood
+            { name_en: "Bangkok", name_zh: "曼谷", x: 0.78, y: 0.50, color: "#fbbf24" },
+            { name_en: "Singapore", name_zh: "新加坡", x: 0.79, y: 0.55, color: "#ef4444" },
+            { name_en: "Paris", name_zh: "巴黎", x: 0.49, y: 0.28, color: "#ec4899" },
+            { name_en: "Berlin", name_zh: "柏林", x: 0.51, y: 0.25, color: "#f97316" },
+            { name_en: "Helsinki", name_zh: "赫爾辛基", x: 0.53, y: 0.18, color: "#3b82f6" },
+            { name_en: "Cannes", name_zh: "坎城", x: 0.50, y: 0.30, color: "#eab308" },
+            { name_en: "Lagos", name_zh: "拉各斯", x: 0.52, y: 0.55, color: "#ef4444" }, // Nollywood    
+            { name_en: "Dubai", name_zh: "迪拜", x: 0.60, y: 0.40, color: "#fbbf24" },
+            { name_en: "Sao Paulo", name_zh: "聖保羅", x: 0.32, y: 0.75, color: "#84cc16" }
+        ];
+
+        let particles = [];
+
+        function resizeCanvas() {
+            width = canvas.parentElement.offsetWidth;
+            height = canvas.parentElement.offsetHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.target = cities[Math.floor(Math.random() * cities.length)];
+                this.sx = Math.random() * width;
+                this.sy = Math.random() * height;
+                this.ex = this.target.x * width;
+                this.ey = this.target.y * height;
+                this.progress = 0;
+                this.speed = 0.001 + Math.random() * 0.002;
+                this.color = this.target.color;
+                
+                const dist = Math.hypot(this.ex - this.sx, this.ey - this.sy);
+                this.cx = (this.sx + this.ex) / 2;
+                this.cy = (this.sy + this.ey) / 2 - dist * 0.6; 
+            }
+            update() {
+                this.progress += this.speed;
+                if (this.progress >= 1) {
+                    this.reset();
+                }
+            }
+            draw() {
+                const t = this.progress;
+                const x = (1 - t) * (1 - t) * this.sx + 2 * (1 - t) * t * this.cx + t * t * this.ex;
+                const y = (1 - t) * (1 - t) * this.sy + 2 * (1 - t) * t * this.cy + t * t * this.ey;
+                
+                const trailLen = 0.15;
+                const tPrev = Math.max(0, t - trailLen);
+                const xp = (1 - tPrev) * (1 - tPrev) * this.sx + 2 * (1 - tPrev) * tPrev * this.cx + tPrev * tPrev * this.ex;
+                const yp = (1 - tPrev) * (1 - tPrev) * this.sy + 2 * (1 - tPrev) * tPrev * this.cy + tPrev * tPrev * this.ey;
+
+                const grad = ctx.createLinearGradient(xp, yp, x, y);
+                grad.addColorStop(0, 'rgba(0,0,0,0)');
+                grad.addColorStop(1, this.color);
+
+                ctx.beginPath();
+                ctx.moveTo(xp, yp);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for(let i=0; i<150; i++) particles.push(new Particle()); // Increased particle count
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            cities.forEach(city => {
+                const cx = city.x * width;
+                const cy = city.y * height;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+                ctx.fillStyle = city.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = city.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                // Fix: Dynamic Language Label
+                ctx.fillStyle = "rgba(255,255,255,0.7)";
+                ctx.font = "10px Space Mono"; 
+                const label = currentLang === 'en' ? city.name_en : city.name_zh;
+                ctx.fillText(label, cx + 8, cy + 3);
+            });
+
+            ctx.globalCompositeOperation = 'lighter';
+            particles.forEach(p => { p.update(); p.draw(); });
+            ctx.globalCompositeOperation = 'source-over';
+            
+            requestAnimationFrame(animate);
+        }
+
+        function startLiveTicker() {
+            const container = document.getElementById('liveTickerContainer');
+            const data = [
+                { user: "0x3A...B9", action: "staked 20K AIF", city: "Tokyo" },
+                { user: "Mike.eth", action: "minted NFT", city: "New York" },
+                { user: "DAO_Fund", action: "injected 1M AIF", city: "Hong Kong" },
+                { user: "Sarah_AI", action: "voted Prop #4", city: "London" },
+                { user: "Creative_X", action: "listed project", city: "Mumbai" },
+                { user: "K-Pop_Fan", action: "bought tokens", city: "Seoul" }
+            ];
+            
+            setInterval(() => {
+                const item = data[Math.floor(Math.random() * data.length)];
+                const el = document.createElement('div');
+                el.className = "bg-black/60 border-l-2 border-accent p-2 text-[10px] text-gray-300 backdrop-blur-sm animate-fade-in-up flex justify-between";
+                el.innerHTML = `<span>${item.user}</span> <span class="text-white font-bold">${item.action}</span> <span class="text-gray-500">${item.city}</span>`;
+                container.prepend(el);
+                if(container.children.length > 4) container.lastElementChild.remove();
+            }, 1200);
+        }
+
+        function startSimulation() {
+            const yearEl = document.getElementById('yearTicker');
+            let year = 2025;
+            let quarter = 1;
+            setInterval(() => {
+                quarter++;
+                if(quarter > 4) { quarter = 1; year++; }
+                yearEl.innerHTML = year + `<span class="text-xl text-accent align-top ml-2">Q${quarter}</span>`;
+                if(year > 2030) year = 2025;
+            }, 2500);
+        }
+
+        // --- Core UI Functions ---
 
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             
-            // Update Navbar Button Text
-            document.querySelectorAll('.lang-text').forEach(el => {
-                el.innerText = currentLang === 'en' ? '繁體中文' : 'English';
-            });
-
-            // Update Static Text
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[currentLang][key] !== undefined) {
@@ -1329,7 +1017,8 @@
                 }
             });
 
-            // Re-render Dynamic Content
+            document.querySelectorAll('.lang-text').forEach(el => el.innerText = currentLang === 'en' ? '繁體中文' : 'English');
+            
             renderProjects();
             renderRoadshows();
         }
@@ -1337,52 +1026,37 @@
         function renderProjects() {
             const grid = document.getElementById('projectGrid');
             grid.innerHTML = '';
-
             projects.forEach((p, index) => {
-                const progress = Math.round((p.raised / p.goal) * 100);
-                const title = currentLang === 'en' ? p.title : (p.title_zh || p.title); // Fallback logic
+                const percent = Math.round((p.raised / p.goal) * 100);
+                const title = currentLang === 'en' ? p.title : (p.title_zh || p.title);
                 const desc = currentLang === 'en' ? p.desc_en : p.desc_zh;
                 
                 const card = `
                     <div class="project-card bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col group h-full hover:border-black transition-all cursor-pointer" onclick="openProjectModal(${index})">
-                        <div class="relative h-56 bg-zinc-900 overflow-hidden">
+                        <div class="relative h-60 bg-zinc-900 overflow-hidden">
                             <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" alt="${title}">
                             <div class="absolute top-3 left-3 flex gap-2">
                                 <span class="bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider border border-white/10">Raising</span>
                             </div>
-                            <div class="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black to-transparent p-5 flex flex-col justify-end">
-                                <div class="text-gray-300 text-xs font-mono mb-1">${p.genre}</div>
-                                <h3 class="text-white text-lg font-bold leading-tight">${title}</h3>
+                            <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent"></div>
+                            <div class="absolute bottom-3 left-4 text-white font-mono text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-bolt text-accent"></i> ${p.rate} Token/AIF
                             </div>
                         </div>
                         <div class="p-5 flex-1 flex flex-col">
                             <div class="mb-4">
                                 <div class="flex justify-between text-xs text-gray-500 mb-1 font-mono">
-                                    <span>${progress}% Funded</span>
+                                    <span>${percent}% Funded</span>
                                     <span class="text-black font-bold">${p.raised.toLocaleString()} AIF</span>
                                 </div>
                                 <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                    <div class="h-full bg-black rounded-full" style="width: ${progress}%"></div>
+                                    <div class="h-full bg-black rounded-full" style="width: ${percent}%"></div>
                                 </div>
                             </div>
-                            
-                            <div class="grid grid-cols-2 gap-3 mb-4 border-b border-gray-100 pb-4">
-                                <div>
-                                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Goal</div>
-                                    <div class="font-bold font-mono text-sm">${(p.goal/1000).toFixed(0)}k AIF</div>
-                                </div>
-                                <div>
-                                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Token</div>
-                                    <div class="font-bold font-mono text-sm">$${p.token}</div>
-                                </div>
-                            </div>
-
-                            <p class="text-xs text-gray-500 mb-5 line-clamp-2 leading-relaxed flex-1">
-                                ${desc}
-                            </p>
-                            
+                            <h3 class="font-bold text-lg mb-2 leading-tight">${title}</h3>
+                            <p class="text-xs text-gray-500 mb-5 line-clamp-2 leading-relaxed flex-1">${desc}</p>
                             <button class="mt-auto w-full border border-black text-black py-2.5 rounded-xl font-bold text-xs hover:bg-black hover:text-white transition-colors uppercase tracking-wide">
-                                ${currentLang === 'en' ? 'View Details & Invest' : '查看詳情 & 投資'}
+                                ${currentLang === 'en' ? 'View Details' : '查看詳情'}
                             </button>
                         </div>
                     </div>
@@ -1394,21 +1068,18 @@
         function renderRoadshows() {
             const list = document.getElementById('roadshowList');
             list.innerHTML = '';
-
             roadshows.forEach((r, index) => {
                 const title = currentLang === 'en' ? r.title_en : r.title_zh;
                 const item = `
-                    <div class="roadshow-item p-6 bg-zinc-900 border border-white/10 rounded-2xl cursor-pointer group" onclick="openRoadshowModal(${index})">
+                    <div class="roadshow-card p-6 bg-zinc-900 border border-white/10 rounded-2xl cursor-pointer hover:bg-zinc-800 transition-colors group" onclick="openRoadshowModal(${index})">
                         <div class="flex justify-between items-start mb-2">
                             <div class="text-xs text-accent font-bold font-mono">${r.date}</div>
                             <div class="text-xs text-gray-500">${r.city}</div>
                         </div>
-                        <h4 class="font-bold text-lg mb-1 group-hover:text-white text-gray-200 transition-colors">${title}</h4>
-                        <p class="text-xs text-gray-500 flex items-center gap-1">
-                            <i class="fas fa-map-marker-alt"></i> ${r.location}
-                        </p>
-                        <div class="mt-4 flex justify-end">
-                            <span class="text-[10px] text-accent font-bold uppercase tracking-wider group-hover:underline">View Agenda &rarr;</span>
+                        <h4 class="font-bold text-lg mb-1 text-gray-200 group-hover:text-white transition-colors">${title}</h4>
+                        <div class="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
+                            <span class="text-[10px] text-gray-500"><i class="fas fa-users"></i> 5 Teams</span>
+                            <span class="text-[10px] text-accent font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">View Agenda &rarr;</span>
                         </div>
                     </div>
                 `;
@@ -1416,17 +1087,13 @@
             });
         }
 
-        // --- 4. Modal Logic ---
-        
-        const modal = document.getElementById('projectModal');
-        const modalContent = document.getElementById('modalContent');
-        const mainBody = document.getElementById('mainBody');
+        // --- MODAL LOGIC (Detail Oriented) ---
 
         function openProjectModal(index) {
             const p = projects[index];
             const percent = Math.round((p.raised / p.goal) * 100);
 
-            // Populate Data
+            // Populate Basic Info
             document.getElementById('mImg').src = p.image;
             document.getElementById('mTitle').innerText = currentLang === 'en' ? p.title : p.title_zh || p.title;
             document.getElementById('mDesc').innerText = currentLang === 'en' ? p.desc_en : p.desc_zh;
@@ -1439,193 +1106,170 @@
             document.getElementById('mProgress').style.width = percent + "%";
             document.getElementById('mPercent').innerText = percent + "%";
 
-            // Milestones Render
+            // Exchange Rate
+            document.getElementById('mExchangeRate').innerText = p.rate;
+            document.getElementById('mExchangeTicker').innerText = p.token;
+
+            // Milestones with NFT Badge
             const mContainer = document.getElementById('mMilestones');
             mContainer.innerHTML = '';
-            p.milestones.forEach(m => {
-                const event = currentLang === 'en' ? m.event_en : m.event_zh;
+            milestonesData.forEach((m, i) => {
                 mContainer.innerHTML += `
-                    <div class="relative">
-                        <div class="absolute -left-[41px] top-1 w-5 h-5 bg-black rounded-full border-4 border-white"></div>
-                        <div class="text-xs font-mono text-gray-400 mb-1">${m.date}</div>
-                        <div class="text-sm font-bold text-gray-800">${event}</div>
-                        <div class="inline-block mt-2 px-2 py-0.5 bg-purple-100 text-purple-600 text-[10px] font-bold rounded border border-purple-200">
-                            <i class="fas fa-cube"></i> NFT Snapshot
-                        </div>
+                    <div class="relative pl-6">
+                        <div class="milestone-node ${i === 1 ? 'animate-pulse' : ''}"></div>
+                        <div class="text-xs font-mono text-accent mb-1 font-bold tracking-wider">${m.date}</div>
+                        <div class="text-white font-bold text-lg mb-1">${m.title}</div>
+                        <div class="text-gray-400 text-sm leading-snug">${m.desc}</div>
+                        ${i >= 1 ? `<div class="nft-badge"><i class="fas fa-cube"></i> NFT MINT PASS</div>` : ''}
                     </div>
                 `;
             });
 
-            // Swap Logic
+            // Swap UI
             document.getElementById('mReceiveTicker').innerText = p.token;
-            document.getElementById('mRateTicker').innerText = p.token;
-            document.getElementById('mRate').innerText = p.rate;
-            
             const input = document.getElementById('investInput');
             const output = document.getElementById('receiveOutput');
-            input.value = '';
-            output.value = '';
-            
-            input.oninput = () => {
-                output.value = (input.value * p.rate).toFixed(2);
-            };
+            input.value = ''; output.value = '';
+            input.oninput = () => { output.value = (input.value * p.rate).toFixed(2); };
 
-            // Show Modal
+            const modal = document.getElementById('projectModal');
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
+                document.getElementById('modalContent').classList.remove('scale-95');
             }, 10);
         }
 
         function closeProjectModal() {
+            const modal = document.getElementById('projectModal');
             modal.classList.add('opacity-0');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            document.getElementById('modalContent').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
-        // --- Roadshow Modal Logic ---
-        const rsModal = document.getElementById('roadshowModal');
-        const rsContent = document.getElementById('roadshowModalContent');
-
+        // Expanded Roadshow Modal Logic
         function openRoadshowModal(index) {
             const r = roadshows[index];
-            const title = currentLang === 'en' ? r.title_en : r.title_zh;
-            const desc = currentLang === 'en' ? r.desc_en : r.desc_zh;
-
-            document.getElementById('rsCity').innerText = r.city;
+            
+            document.getElementById('rsImg').src = r.image;
+            // document.getElementById('rsCity').innerText = r.city; // Element not present in original HTML, removed to prevent error
             document.getElementById('rsDate').innerText = r.date;
             document.getElementById('rsLoc').innerText = r.location;
-            document.getElementById('rsTitle').innerText = title;
-            document.getElementById('rsDesc').innerText = desc;
-            document.getElementById('rsImg').src = r.image;
-
+            document.getElementById('rsTitle').innerText = currentLang === 'en' ? r.title_en : r.title_zh;
+            document.getElementById('rsDesc').innerText = currentLang === 'en' ? r.desc_en : r.desc_zh;
+            
+            // Agenda
             const agendaList = document.getElementById('rsAgenda');
             agendaList.innerHTML = '';
             r.agenda.forEach(item => {
-                agendaList.innerHTML += `<li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-accent rounded-full mt-2"></span><span>${item}</span></li>`;
+                agendaList.innerHTML += `
+                    <li class="flex items-start gap-3 border-b border-zinc-800 pb-2 last:border-0">
+                        <span class="w-1.5 h-1.5 bg-accent rounded-full mt-2 flex-shrink-0"></span>
+                        <span class="text-sm text-gray-300">${item}</span>
+                    </li>
+                `;
             });
 
-            const projectTags = document.getElementById('rsProjects');
-            projectTags.innerHTML = '';
-            r.projects.forEach(p => {
-                projectTags.innerHTML += `<span class="px-3 py-1 bg-zinc-800 text-gray-300 text-xs rounded-full border border-zinc-700">${p}</span>`;
-            });
+            // Pitching Schedule (Robust Rendering with Time, Name, Team, Content)
+            const projectsList = document.getElementById('rsProjectsList');
+            projectsList.innerHTML = '';
+            if (r.pitching && r.pitching.length > 0) {
+                r.pitching.forEach(p => {
+                    projectsList.innerHTML += `
+                        <div class="bg-zinc-800/80 p-4 rounded-xl border border-zinc-700 flex flex-col gap-3 hover:bg-zinc-800 transition-colors">
+                            <div class="flex items-center justify-between">
+                                <div class="bg-black px-3 py-1 rounded text-xs font-mono font-bold text-accent whitespace-nowrap">${p.time}</div>
+                                <div class="text-xs text-gray-500 font-mono border border-zinc-600 px-2 py-1 rounded bg-black/50"><i class="fas fa-users mr-1"></i> ${p.team}</div>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm mb-1">${p.name}</h4>
+                                <p class="text-xs text-gray-400 leading-relaxed">${p.desc}</p>
+                            </div>
+                            ${p.content ? `
+                            <div class="pt-2 border-t border-white/5 mt-1">
+                                <p class="text-[10px] text-gray-500"><span class="text-gray-400 font-bold uppercase">Arrangement:</span> ${p.content}</p>
+                            </div>` : ''}
+                        </div>
+                    `;
+                });
+            } else {
+                projectsList.innerHTML = `<div class="text-gray-500 text-sm">Schedule details coming soon.</div>`;
+            }
 
-            rsModal.classList.remove('hidden');
+            const modal = document.getElementById('roadshowModal');
+            modal.classList.remove('hidden');
             setTimeout(() => {
-                rsModal.classList.remove('opacity-0');
-                rsContent.classList.remove('scale-95');
+                modal.classList.remove('opacity-0');
+                document.getElementById('roadshowModalContent').classList.remove('scale-95');
             }, 10);
         }
 
         function closeRoadshowModal() {
-            rsModal.classList.add('opacity-0');
-            rsContent.classList.add('scale-95');
-            setTimeout(() => {
-                rsModal.classList.add('hidden');
-            }, 300);
+            const modal = document.getElementById('roadshowModal');
+            modal.classList.add('opacity-0');
+            document.getElementById('roadshowModalContent').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
-
-        // --- 5. Interaction Logic ---
 
         function connectWallet() {
             if(isConnected) return;
             const btn = document.getElementById('walletBtn');
             const txt = document.getElementById('walletText');
-            
             txt.innerText = 'Connecting...';
-            
             setTimeout(() => {
                 isConnected = true;
                 txt.innerText = '0x3F...82A1';
-                
-                // Show balances
-                const bal = "12,450";
-                document.getElementById('userBalanceDisplay').innerText = bal;
-                document.getElementById('mUserBal').innerText = bal;
-                
-                // Style update
+                document.getElementById('userBalanceDisplay').innerText = "14,280";
                 btn.classList.replace('bg-black', 'bg-white');
                 btn.classList.replace('text-white', 'text-black');
                 btn.classList.add('border', 'border-gray-200');
-                
-                showToast(currentLang === 'en' ? 'Wallet Connected via MagicLink' : '錢包已通過 MagicLink 連接');
             }, 1500);
         }
 
         function simulateInvest() {
-            if(!isConnected) {
-                alert(currentLang === 'en' ? 'Please connect wallet first.' : '請先連接錢包');
-                return;
-            }
-            const input = document.getElementById('investInput');
-            if(!input.value) return;
-
-            const btn = document.getElementById('investBtn');
-            const originalText = btn.innerHTML;
+            if(!isConnected) { alert("Please connect wallet."); return; }
+            if(!document.getElementById('investInput').value) return;
             
+            const btn = document.getElementById('investBtn');
+            const oldHtml = btn.innerHTML;
             btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Processing...`;
-            btn.disabled = true;
-
             setTimeout(() => {
                 closeProjectModal();
-                showToast(currentLang === 'en' ? `Success! Minted ${document.getElementById('receiveOutput').value} ${document.getElementById('mReceiveTicker').innerText}` : `成功！已鑄造 ${document.getElementById('receiveOutput').value} ${document.getElementById('mReceiveTicker').innerText}`);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                const toast = document.getElementById('toast');
+                toast.classList.remove('translate-y-32');
+                setTimeout(() => toast.classList.add('translate-y-32'), 3000);
+                btn.innerHTML = oldHtml;
             }, 2000);
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            toast.classList.remove('translate-y-32');
-            setTimeout(() => toast.classList.add('translate-y-32'), 3000);
         }
 
         // Compliance
         const complianceChecks = document.querySelectorAll('.compliance-check');
         const complianceBtn = document.getElementById('complianceBtn');
         const complianceModal = document.getElementById('complianceModal');
-
         complianceChecks.forEach(check => {
             check.addEventListener('change', () => {
-                const allChecked = Array.from(complianceChecks).every(c => c.checked);
-                complianceBtn.disabled = !allChecked;
+                complianceBtn.disabled = !Array.from(complianceChecks).every(c => c.checked);
             });
         });
-
         function acceptCompliance() {
             complianceModal.style.opacity = '0';
             setTimeout(() => {
                 complianceModal.classList.add('hidden');
-                mainBody.classList.remove('overflow-hidden');
+                document.body.classList.remove('overflow-hidden');
             }, 500);
         }
 
-        // Live Ticker Logic
-        const liveTicker = document.getElementById('liveTicker');
-        const cities = ["New York", "London", "Tokyo", "Seoul", "Paris", "Dubai"];
-        const actions = ["minted 500 AIF", "staked 2000 AIF", "redeemed FilmToken", "joined Roadshow"];
-
-        setInterval(() => {
-            const city = cities[Math.floor(Math.random() * cities.length)];
-            const action = actions[Math.floor(Math.random() * actions.length)];
-            const item = document.createElement('div');
-            item.className = "bg-zinc-800/80 backdrop-blur px-3 py-2 rounded-lg border border-zinc-700 text-xs flex justify-between items-center animate-fade-in-up";
-            item.innerHTML = `<span class="text-gray-400">${city}</span> <span class="text-white">${action}</span>`;
-            
-            liveTicker.prepend(item);
-            if (liveTicker.children.length > 4) liveTicker.lastChild.remove();
-        }, 2000);
-
-        // --- Init ---
+        // Init
         window.addEventListener('load', () => {
             renderProjects();
             renderRoadshows();
+            resizeCanvas();
+            initParticles();
+            animate();
+            startLiveTicker();
+            startSimulation();
         });
+        window.addEventListener('resize', resizeCanvas);
 
     </script>
 </body>
