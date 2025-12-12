@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HKAIFM - Hong Kong AI Film Market</title>
+    <title>HKAIFM - Hong Kong AI Film Asset Allocation Platform</title>
     
+    <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -17,28 +19,31 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Inter"', 'sans-serif'],
+                        sans: ['"Inter"', '"Noto Sans TC"', 'sans-serif'],
                         mono: ['"Space Mono"', 'monospace'],
                     },
                     colors: {
-                        black: '#1a1a1a', 
-                        offblack: '#222222',
+                        black: '#050505', 
+                        zinc: {
+                            800: '#27272a',
+                            900: '#18181b',
+                            950: '#09090b',
+                        },
                         white: '#ffffff',
-                        offwhite: '#f9f9f9',
-                        gray: {
-                            100: '#f3f3f3',
-                            200: '#e5e5e5',
-                            500: '#737373',
-                            900: '#111111'
-                        }
+                        accent: '#2563eb', 
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
                     },
                     animation: {
-                        'marquee': 'marquee 40s linear infinite',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'ping-slow': 'ping 3s cubic-bezier(0, 0, 0.2, 1) infinite',
                     },
                     keyframes: {
-                        marquee: {
-                            '0%': { transform: 'translateX(0%)' },
-                            '100%': { transform: 'translateX(-50%)' },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
                         }
                     }
                 }
@@ -49,1178 +54,1579 @@
     <style>
         body {
             background-color: #ffffff;
-            color: #1a1a1a;
+            color: #050505;
             -webkit-font-smoothing: antialiased;
         }
-        
-        /* Language System */
-        body[data-lang="en"] .lang-zh { display: none !important; }
-        body[data-lang="zh"] .lang-en { display: none !important; }
 
-        ::-webkit-scrollbar { width: 8px; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #fff; }
-        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ccc; }
+        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
 
-        .academy-btn {
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        .project-card {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        .academy-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .border-grid { border: 1px solid #e5e5e5; }
-
-        .reveal-text { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
-        .reveal-text.active { opacity: 1; transform: translateY(0); }
-        
-        .img-zoom-container { overflow: hidden; }
-        .img-zoom-container img { transition: transform 0.7s ease; }
-        .group:hover .img-zoom-container img { transform: scale(1.05); }
-
-        /* Compliance Modal Styles */
-        .compliance-overlay {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
         }
 
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(90deg, #000 0%, #666 100%);
+        }
+
+        .roadshow-item {
+            transition: all 0.3s ease;
+        }
+        .roadshow-item:hover {
+            background-color: #18181b; /* zinc-900 */
+            transform: translateX(5px);
+        }
+
+        /* Checkbox */
         .custom-checkbox {
             appearance: none;
             background-color: #fff;
-            margin: 0;
-            font: inherit;
-            color: currentColor;
-            width: 1.15em;
-            height: 1.15em;
-            border: 1px solid currentColor;
-            border-radius: 0.15em;
+            width: 1.2em;
+            height: 1.2em;
+            border: 1px solid #000;
+            border-radius: 0.2em;
             display: grid;
             place-content: center;
             cursor: pointer;
         }
-
         .custom-checkbox::before {
             content: "";
             width: 0.65em;
             height: 0.65em;
             transform: scale(0);
             transition: 120ms transform ease-in-out;
-            box-shadow: inset 1em 1em #1a1a1a;
-            background-color: #1a1a1a;
+            box-shadow: inset 1em 1em #000;
+            background-color: #000;
             transform-origin: center;
             clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
         }
+        .custom-checkbox:checked::before { transform: scale(1); }
 
-        .custom-checkbox:checked::before {
-            transform: scale(1);
+        /* Map Animations */
+        .map-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #2563eb;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #2563eb;
+            z-index: 10;
+        }
+        .map-ping {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #2563eb;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9;
+            opacity: 0.5;
+        }
+        .map-label {
+            position: absolute;
+            transform: translate(-50%, -150%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .map-dot:hover + .map-label, .map-dot:hover ~ .map-label {
+            opacity: 1;
+        }
+        
+        .data-popup {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(0, 0, 0, 0.9));
+            border: 1px solid #2563eb;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            z-index: 30;
+            pointer-events: none;
+            animation: popupFade 3s ease-out forwards;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        @keyframes popupFade {
+            0% { opacity: 0; transform: translateY(10px) scale(0.9); }
+            10% { opacity: 1; transform: translateY(0) scale(1); }
+            80% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-10px) scale(0.9); }
         }
     </style>
 </head>
 
-<body id="mainBody" data-lang="en" class="bg-white text-black selection:bg-black selection:text-white overflow-hidden">
+<body id="mainBody" class="overflow-hidden bg-white text-black">
 
-    <div id="complianceModal" class="fixed inset-0 z-[100] compliance-overlay flex items-center justify-center p-4">
-        <div class="bg-white border border-black shadow-2xl rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto flex flex-col relative">
-            
-            <div class="absolute top-6 right-6 z-10">
+    <!-- 1. Compliance Modal -->
+    <div id="complianceModal" class="fixed inset-0 z-[100] bg-white/95 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-500">
+        <div class="bg-white border border-gray-200 shadow-2xl rounded-2xl max-w-lg w-full p-8 md:p-12 relative">
+            <div class="absolute top-6 right-6">
                 <button onclick="toggleLanguage()" class="text-xs font-mono border border-gray-200 px-3 py-1.5 rounded-full hover:bg-black hover:text-white transition-all uppercase flex items-center gap-2">
                     <i class="fas fa-globe"></i>
-                    <span class="lang-en">繁中</span><span class="lang-zh">EN</span>
+                    <span class="lang-text">繁體中文</span>
                 </button>
             </div>
 
-            <div class="p-8 md:p-10">
-                <div class="text-center mb-8">
-                    <div class="inline-block p-3 rounded-full bg-black text-white mb-4 text-xl">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold mb-2">
-                        <span class="lang-zh">重要聲明</span>
-                        <span class="lang-en">Important Disclaimer</span>
-                    </h2>
-                    <div class="h-1 w-16 bg-black mx-auto"></div>
+            <div class="text-center mb-8">
+                <div class="inline-block p-4 rounded-full bg-black text-white mb-4 text-2xl">
+                    <i class="fas fa-gavel"></i>
                 </div>
-
-                <div class="text-sm text-gray-600 mb-8 leading-relaxed text-center space-y-2">
-                    <p>
-                        <span class="lang-zh">您即將進入 HKAIIFF 數字資產服務區域。</span>
-                        <span class="lang-en">You are about to enter the HKAIIFF Digital Asset Service Area.</span>
-                    </p>
-                    <p class="font-medium text-black">
-                        <span class="lang-zh">本服務由香港主體提供，受香港法律管轄。</span>
-                        <span class="lang-en">This service is provided by a Hong Kong entity and is subject to Hong Kong laws.</span>
-                    </p>
-                </div>
-
-                <div class="space-y-4 mb-8">
-                    <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
-                        <span class="lang-zh">請確認：</span>
-                        <span class="lang-en">Please Confirm:</span>
-                    </p>
-                    
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" class="custom-checkbox mt-0.5 compliance-check">
-                        <span class="text-sm group-hover:text-black text-gray-600 transition-colors">
-                            <span class="lang-zh">本人非中國大陸居民</span>
-                            <span class="lang-en">I am not a resident of Mainland China</span>
-                        </span>
-                    </label>
-
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" class="custom-checkbox mt-0.5 compliance-check">
-                        <span class="text-sm group-hover:text-black text-gray-600 transition-colors">
-                            <span class="lang-zh">本人非美國公民或居民</span>
-                            <span class="lang-en">I am not a U.S. citizen or resident</span>
-                        </span>
-                    </label>
-
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" class="custom-checkbox mt-0.5 compliance-check">
-                        <span class="text-sm group-hover:text-black text-gray-600 transition-colors">
-                            <span class="lang-zh">本人通過自有境外資產參與</span>
-                            <span class="lang-en">I am participating using my own offshore assets</span>
-                        </span>
-                    </label>
-
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" class="custom-checkbox mt-0.5 compliance-check">
-                        <span class="text-sm group-hover:text-black text-gray-600 transition-colors">
-                            <span class="lang-zh">本人知悉數字資產風險</span>
-                            <span class="lang-en">I am aware of the risks involved in digital assets</span>
-                        </span>
-                    </label>
-
-                    <label class="flex items-start gap-3 cursor-pointer group">
-                        <input type="checkbox" class="custom-checkbox mt-0.5 compliance-check">
-                        <span class="text-sm group-hover:text-black text-gray-600 transition-colors">
-                            <span class="lang-zh">本人自願承擔全部風險</span>
-                            <span class="lang-en">I voluntarily assume all risks</span>
-                        </span>
-                    </label>
-                </div>
-
-                <div class="space-y-4">
-                    <button id="complianceBtn" disabled onclick="acceptCompliance()" class="w-full bg-black text-white py-4 rounded-xl font-bold text-sm tracking-wide disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-900 transition-all transform hover:-translate-y-1">
-                        <span class="lang-zh">確認並進入</span>
-                        <span class="lang-en">Confirm & Enter</span>
-                    </button>
-                    
-                    <p class="text-[10px] text-center text-gray-400">
-                        <span class="lang-zh">我已閱讀並同意《用戶協議》《風險提示書》</span>
-                        <span class="lang-en">I have read and agree to the "User Agreement" and "Risk Disclosure Statement"</span>
-                    </p>
-                </div>
+                <h2 class="text-2xl font-bold mb-2 tracking-tight" data-i18n="compliance_title">HKAIFM Access Disclaimer</h2>
+                <div class="h-1 w-12 bg-black mx-auto mt-2"></div>
             </div>
+
+            <div class="text-sm text-gray-500 mb-8 leading-relaxed text-center space-y-2">
+                <p data-i18n="compliance_desc1">You are about to enter the world's first AI Film Asset Allocation Platform.</p>
+                <p class="font-bold text-black" data-i18n="compliance_desc2">This service is governed by Hong Kong laws and is NOT available to residents of Mainland China or the United States.</p>
+            </div>
+
+            <div class="space-y-4 mb-8">
+                <label class="flex items-start gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded transition">
+                    <input type="checkbox" class="custom-checkbox mt-1 compliance-check">
+                    <span class="text-sm text-gray-600" data-i18n="compliance_check1">I am NOT a resident of Mainland China / NOT a US Citizen.</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded transition">
+                    <input type="checkbox" class="custom-checkbox mt-1 compliance-check">
+                    <span class="text-sm text-gray-600" data-i18n="compliance_check2">I understand the risks of digital asset investment and assume full responsibility.</span>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded transition">
+                    <input type="checkbox" class="custom-checkbox mt-1 compliance-check">
+                    <span class="text-sm text-gray-600" data-i18n="compliance_check3">I have read and agree to the "User Agreement".</span>
+                </label>
+            </div>
+
+            <button id="complianceBtn" disabled onclick="acceptCompliance()" class="w-full bg-black text-white py-4 rounded-xl font-bold tracking-wide disabled:opacity-30 disabled:cursor-not-allowed hover:bg-zinc-800 transition-all shadow-lg transform hover:-translate-y-0.5" data-i18n="compliance_btn">
+                Confirm & Enter Platform
+            </button>
         </div>
     </div>
-    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 transition-all duration-300">
+
+    <!-- 2. Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
         <div class="px-6 md:px-8 py-4 flex justify-between items-center max-w-[1920px] mx-auto">
-            <a href="#" class="flex items-center gap-4 group">
-                <div class="flex flex-col leading-tight">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-9 h-9 bg-black rounded-lg flex items-center justify-center text-white font-bold font-mono text-xl group-hover:scale-110 transition-transform">H</div>
+                <div class="flex flex-col leading-none">
                     <span class="text-lg font-bold tracking-tight">HKAIFM.</span>
-                    <span class="text-[0.6rem] font-mono uppercase tracking-wider text-gray-500 group-hover:text-black transition-colors">
-                        <span class="lang-en">Hong Kong AI Film Market</span>
-                        <span class="lang-zh">香港AI電影市場</span>
-                    </span>
+                    <span class="text-[0.6rem] font-mono uppercase tracking-wider text-gray-500 group-hover:text-black transition-colors">HONG KONG AI FILM MARKET</span>
                 </div>
             </a>
             
-            <div class="hidden xl:flex items-center gap-1 text-[13px] font-medium tracking-wide">
-                <a href="#about" class="px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"><span class="lang-en">About</span><span class="lang-zh">關於</span></a>
-                <a href="#ecosystem" class="px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"><span class="lang-en">Ecosystem</span><span class="lang-zh">生態</span></a>
-                <a href="#projects" class="px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"><span class="lang-en">RWA Assets</span><span class="lang-zh">RWA資產</span></a>
-                <a href="#participation" class="px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"><span class="lang-en">Participation</span><span class="lang-zh">參與</span></a>
-                <a href="#market" class="px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"><span class="lang-en">Market</span><span class="lang-zh">市場</span></a>
-                <a href="#partners" class="px-4 py-2 rounded-full hover:bg-gray-100 transition-colors"><span class="lang-en">Partners</span><span class="lang-zh">合作</span></a>
+            <div class="hidden xl:flex items-center gap-8 text-[14px] font-medium text-gray-600">
+                <a href="#heatmap" class="hover:text-black transition-colors text-accent font-bold" data-i18n="nav_heatmap">Live Heatmap</a>
+                <a href="#marketplace" class="hover:text-black transition-colors" data-i18n="nav_market">Marketplace</a>
+                <a href="#roadshows" class="hover:text-black transition-colors" data-i18n="nav_roadshow">Roadshows</a>
+                <a href="#creator" class="hover:text-black transition-colors" data-i18n="nav_creator">Creator Studio</a>
+                <a href="#my-assets" class="hover:text-black transition-colors" data-i18n="nav_assets">My Assets</a>
             </div>
 
             <div class="flex items-center gap-4">
-                <button onclick="toggleLanguage()" class="text-xs font-mono border border-gray-200 px-3 py-1.5 rounded-full hover:bg-black hover:text-white transition-all uppercase">
-                    <span class="lang-en">繁中</span><span class="lang-zh">EN</span>
+                <button onclick="toggleLanguage()" class="text-xs font-mono border border-gray-200 px-3 py-1.5 rounded-full hover:bg-black hover:text-white transition-all uppercase hidden md:flex items-center gap-2">
+                    <span class="lang-text">繁體中文</span>
                 </button>
+
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100">
+                    <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+                    <span class="text-xs font-mono text-gray-500">AIF: $12.42</span>
+                </div>
                 
-                <a href="#participation" class="hidden md:flex bg-black text-white text-[13px] font-medium px-6 py-3 rounded-full academy-btn items-center gap-2">
-                    <span class="lang-en">Access AIF Utility</span><span class="lang-zh">獲取AIF權益</span>
-                </a>
+                <button onclick="connectWallet()" id="walletBtn" class="bg-black text-white text-[13px] font-medium px-6 py-2.5 rounded-full hover:bg-zinc-800 transition-all flex items-center gap-2 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-wallet"></i>
+                    <span id="walletText" data-i18n="btn_connect">Connect Wallet</span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <header class="relative pt-32 pb-20 px-6 md:px-8 max-w-[1920px] mx-auto border-b border-gray-200">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-            <div class="md:col-span-8">
-                <div class="mb-6 inline-flex items-center gap-2 border border-gray-200 rounded-full px-3 py-1 bg-gray-50">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-[10px] uppercase tracking-widest font-mono font-medium text-gray-500">
-                        <span class="lang-en">Global Infrastructure for AI Creative Industry</span><span class="lang-zh">AI時代創意產業全球基礎設施</span>
-                    </span>
+    <!-- 3. Hero Section -->
+    <header class="relative pt-36 pb-20 px-6 md:px-8 max-w-[1920px] mx-auto border-b border-gray-100 overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div class="lg:col-span-7 space-y-8 animate-fade-in-up">
+                <div class="inline-flex items-center gap-2 border border-gray-200 rounded-full px-4 py-1.5 bg-white shadow-sm hover:shadow-md transition-shadow cursor-default">
+                    <span class="w-2 h-2 rounded-full bg-accent"></span>
+                    <span class="text-[10px] uppercase tracking-widest font-mono font-bold text-gray-600">WEB3.0 CREATIVE ECONOMY</span>
                 </div>
                 
-                <h1 class="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] mb-10 text-black">
-                    <span class="lang-en">Creative Value <br> Network.</span>
-                    <span class="lang-zh">創意價值 <br> 網絡新基建</span>
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[1.05] text-black">
+                    <span data-i18n="hero_title1">Invest in the</span><br>
+                    <span class="gradient-text" data-i18n="hero_title2">Compute & Future</span><br>
+                    <span data-i18n="hero_title3">of AI Cinema.</span>
                 </h1>
                 
-                <p class="text-lg md:text-xl text-gray-500 max-w-2xl leading-relaxed font-light">
-                    <span class="lang-en">Hong Kong AI Film Market (HKAIFM) is the world's first distributed computing settlement and copyright value network designed specifically for the AI-native era.</span>
-                    <span class="lang-zh">香港AI電影市場(HKAIFM)是全球首個專門為AI原生時代設計的分佈式算力結算與版權價值網絡。</span>
+                <p class="text-lg text-gray-500 max-w-2xl leading-relaxed font-light" data-i18n="hero_desc">
+                    HKAIFM enables you to directly participate in the AI film industry. Exchange AIF for FilmTokens, inject computing power into premium projects, and share box office dividends, copyright revenue, and peripheral rights.
                 </p>
+
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <a href="#marketplace" class="bg-black text-white px-10 py-4 rounded-full font-bold text-sm tracking-wide hover:bg-zinc-800 transition-transform hover:-translate-y-1 shadow-lg flex items-center gap-2">
+                        <span data-i18n="hero_cta_primary">Explore Projects</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#heatmap" class="bg-white border border-gray-200 text-black px-10 py-4 rounded-full font-bold text-sm tracking-wide hover:bg-gray-50 transition-colors flex items-center gap-2">
+                        <i class="fas fa-globe"></i>
+                        <span data-i18n="hero_cta_heatmap">Global Heatmap</span>
+                    </a>
+                </div>
             </div>
 
-            <div class="md:col-span-4 flex flex-col justify-end">
-                <div class="grid grid-cols-2 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden">
-                    <div class="bg-white p-6 hover:bg-gray-50 transition-colors">
-                        <span class="block text-3xl font-bold mb-1">26</span>
-                        <span class="text-[10px] uppercase font-mono text-gray-400"><span class="lang-en">IP Assets</span><span class="lang-zh">IP資產項目</span></span>
+            <!-- Stats Dashboard -->
+            <div class="lg:col-span-5 relative">
+                <div class="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-8 shadow-2xl transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                    <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
+                        <h3 class="font-bold text-lg flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                            <span data-i18n="stats_title">Live Market Data</span>
+                        </h3>
+                        <span class="text-xs font-mono text-gray-400">HKAIFM-MAINNET</span>
                     </div>
-                    <div class="bg-white p-6 hover:bg-gray-50 transition-colors">
-                        <span class="block text-3xl font-bold mb-1">AIF</span>
-                        <span class="text-[10px] uppercase font-mono text-gray-400"><span class="lang-en">Computing Utility</span><span class="lang-zh">算力通證</span></span>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors">
+                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_fundraising">Fundraising</div>
+                            <div class="text-3xl font-bold font-mono">16</div>
+                        </div>
+                        <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors">
+                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_dividends">Total Dividends (AIF)</div>
+                            <div class="text-3xl font-bold font-mono text-success">48.2M</div>
+                        </div>
+                        <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors">
+                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_compute">Compute Pool</div>
+                            <div class="text-3xl font-bold font-mono">128P</div>
+                        </div>
+                        <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors">
+                            <div class="text-xs text-gray-500 mb-2 uppercase tracking-wider" data-i18n="stat_investors">Investors</div>
+                            <div class="text-3xl font-bold font-mono">8.5K</div>
+                        </div>
                     </div>
-                    <div class="bg-white p-6 hover:bg-gray-50 transition-colors">
-                        <span class="block text-3xl font-bold mb-1">6+1+1</span>
-                        <span class="text-[10px] uppercase font-mono text-gray-400"><span class="lang-en">Ecosystem</span><span class="lang-zh">生態架構</span></span>
-                    </div>
-                    <div class="bg-white p-6 hover:bg-gray-50 transition-colors">
-                        <span class="block text-3xl font-bold mb-1">∞</span>
-                        <span class="text-[10px] uppercase font-mono text-gray-400"><span class="lang-en">Creative Value</span><span class="lang-zh">創意價值</span></span>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500" data-i18n="balance_label">Your Balance</div>
+                                <div class="font-bold font-mono text-sm" id="userBalanceDisplay">---</div>
+                            </div>
+                        </div>
+                        <a href="http://token.aif.market" target="_blank" class="text-xs font-bold underline hover:text-accent" data-i18n="top_up">Top Up AIF</a>
                     </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="border-b border-gray-200 py-6 overflow-hidden bg-gray-50">
-        <div class="whitespace-nowrap animate-marquee flex items-center gap-12 opacity-80 text-xs font-mono font-medium uppercase tracking-widest text-black">
-            <span>IP Assets</span> <span>✦</span> <span>Verifiable Digital Copyrights</span> <span>✦</span> <span>NFT Products</span> <span>✦</span> <span>AIF Utility</span> <span>✦</span> <span>Creative Economy</span> <span>✦</span>
-            <span>IP資產</span> <span>✦</span> <span>可驗證數字版權</span> <span>✦</span> <span>非同質化產品</span> <span>✦</span> <span>AIF算力通證</span> <span>✦</span> <span>創意經濟</span> <span>✦</span>
-            <span>IP Assets</span> <span>✦</span> <span>Verifiable Digital Copyrights</span> <span>✦</span> <span>NFT Products</span> <span>✦</span> <span>AIF Utility</span> <span>✦</span> <span>Creative Economy</span> <span>✦</span>
+    <!-- NEW SECTION: Global Heatmap -->
+    <section id="heatmap" class="py-20 bg-black text-white relative overflow-hidden border-t border-b border-gray-800">
+        <!-- Background Map Image -->
+        <div class="absolute inset-0 opacity-40">
+            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" class="w-full h-full object-cover" alt="World Map Night">
         </div>
-    </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')]"></div>
 
-    <section id="about" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto border-b border-gray-200">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-16">
-            <div class="md:col-span-4">
-                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 reveal-text">
-                    <span class="lang-en">What is <br> HKAIFM</span>
-                    <span class="lang-zh">什麼是 <br> HKAIFM</span>
-                </h2>
-                <span class="inline-block px-3 py-1 rounded-full border border-gray-300 text-xs font-mono text-gray-500 uppercase reveal-text delay-100">// The Paradigm Shift</span>
-            </div>
-            <div class="md:col-span-8">
-                <p class="text-xl font-light text-gray-600 mb-12 reveal-text">
-                    <span class="lang-en">HKAIFM is not a traditional exchange, but a complete ecosystem integrating creative incubation, value discovery, and copyright standardization, specifically serving the creative industry.</span>
-                    <span class="lang-zh">HKAIFM不是傳統意義上的交易所，而是一個集創意孵化、價值發現、版權標準化於一體的完整生態系統，專門服務於AI時代的創意產業。</span>
-                </p>
+        <div class="max-w-[1920px] mx-auto px-6 md:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-start mb-12">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                        <span class="text-xs font-mono text-accent uppercase tracking-widest">Live Mainnet Activity</span>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-4" data-i18n="map_title">Global Compute Heatmap</h2>
+                    <p class="text-gray-400 text-sm max-w-xl" data-i18n="map_desc">Real-time visualization of AIF injection and project growth across key creative hubs. Witness the explosion of AI cinema.</p>
+                </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 reveal-text">
-                    <div class="p-6 border border-gray-100 bg-gray-50 rounded-lg">
-                        <h4 class="text-xs uppercase tracking-wider text-gray-500 mb-4"><span class="lang-en">Traditional</span><span class="lang-zh">傳統模式</span></h4>
-                        <h3 class="text-2xl font-bold mb-4 line-through decoration-gray-400 decoration-2 text-gray-400"><span class="lang-en">Centralized Markets</span><span class="lang-zh">中心化市場</span></h3>
-                        <ul class="text-sm text-gray-500 space-y-3 list-disc pl-4">
-                            <li><span class="lang-en">High barrier for creators</span><span class="lang-zh">創作者參與門檻高</span></li>
-                            <li><span class="lang-en">Opaque value assessment</span><span class="lang-zh">價值評估不透明</span></li>
-                            <li><span class="lang-en">High production costs</span><span class="lang-zh">製作成本高昂</span></li>
-                        </ul>
+                <!-- Time Simulation Control -->
+                <div class="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 rounded-xl p-4 w-full md:w-auto mt-6 md:mt-0">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-gray-500 uppercase">Industry Simulation</span>
+                        <span class="text-sm font-bold font-mono text-accent" id="simYear">2025 Q4</span>
                     </div>
-                    <div class="p-6 border border-black bg-black text-white rounded-lg shadow-xl">
-                        <h4 class="text-xs uppercase tracking-wider text-gray-400 mb-4"><span class="lang-en">AI Era</span><span class="lang-zh">AI 時代</span></h4>
-                        <h3 class="text-2xl font-bold mb-4"><span class="lang-en">Distributed Ecosystem</span><span class="lang-zh">分佈式生態</span></h3>
-                        <ul class="text-sm text-gray-300 space-y-3 list-disc pl-4">
-                            <li><span class="lang-en">Global access for creators</span><span class="lang-zh">全球創作者參與</span></li>
-                            <li><span class="lang-en">Transparent value discovery</span><span class="lang-zh">透明價值發現機制</span></li>
-                            <li><span class="lang-en">Low-cost efficient creation</span><span class="lang-zh">AI賦能低成本創作</span></li>
-                        </ul>
+                    <div class="w-full md:w-64 h-2 bg-zinc-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-accent animate-[width_10s_linear_infinite]" style="width: 20%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-gray-600 mt-1 font-mono">
+                        <span>NOW</span>
+                        <span>2027</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Container -->
+            <div class="relative w-full h-[500px] md:h-[600px] bg-zinc-900/30 rounded-3xl border border-white/10 shadow-2xl backdrop-blur-sm overflow-hidden" id="mapContainer">
+                
+                <!-- Map Interactions Layer -->
+                <div class="absolute inset-0" id="mapInteractions">
+                    <!-- Hotspots (Calculated roughly by % for responsiveness) -->
+                    
+                    <!-- New York (USA) -->
+                    <div class="absolute top-[28%] left-[27%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-ping animate-ping-slow"></div>
+                        <div class="map-label">NEW YORK<br><span class="text-accent">3 Projects</span></div>
+                    </div>
+
+                    <!-- Los Angeles (USA) -->
+                    <div class="absolute top-[32%] left-[18%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-ping animate-ping-slow"></div>
+                        <div class="map-label">HOLLYWOOD<br><span class="text-accent">High Activity</span></div>
+                    </div>
+
+                    <!-- London (Europe) -->
+                    <div class="absolute top-[24%] left-[48%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-ping animate-ping-slow"></div>
+                        <div class="map-label">LONDON<br><span class="text-accent">2 Projects</span></div>
+                    </div>
+
+                    <!-- Paris (Europe) -->
+                    <div class="absolute top-[27%] left-[50%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-label">PARIS<br><span class="text-accent">Art House</span></div>
+                    </div>
+
+                    <!-- Lagos (Africa) -->
+                    <div class="absolute top-[50%] left-[52%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-label">LAGOS<br><span class="text-accent">Emerging</span></div>
+                    </div>
+
+                    <!-- Dubai (Middle East) -->
+                    <div class="absolute top-[38%] left-[60%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-ping animate-ping-slow"></div>
+                        <div class="map-label">DUBAI<br><span class="text-accent">Capital Hub</span></div>
+                    </div>
+
+                    <!-- Seoul (Asia) -->
+                    <div class="absolute top-[32%] left-[83%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-ping animate-ping-slow"></div>
+                        <div class="map-label">SEOUL<br><span class="text-accent">K-AI Wave</span></div>
+                    </div>
+
+                    <!-- Tokyo (Asia) -->
+                    <div class="absolute top-[33%] left-[86%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-ping animate-ping-slow"></div>
+                        <div class="map-label">TOKYO<br><span class="text-accent">Anime Gen</span></div>
+                    </div>
+
+                    <!-- Bangkok (Asia) -->
+                    <div class="absolute top-[45%] left-[78%] group">
+                        <div class="map-dot animate-pulse"></div>
+                        <div class="map-label">BANGKOK<br><span class="text-accent">Creative</span></div>
+                    </div>
+
+                    <!-- Hong Kong (HQ) -->
+                    <div class="absolute top-[40%] left-[80%] z-20">
+                        <div class="w-4 h-4 bg-white rounded-full absolute -translate-x-1/2 -translate-y-1/2 shadow-[0_0_20px_white] animate-pulse"></div>
+                        <div class="absolute -translate-x-1/2 -translate-y-[180%] bg-white text-black font-bold px-3 py-1 rounded text-xs">HONG KONG (HQ)</div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 reveal-text">
-                    <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="text-3xl mb-4">🔍</div>
-                        <h4 class="font-bold mb-2"><span class="lang-en">Value Discovery</span><span class="lang-zh">價值發現引擎</span></h4>
-                        <p class="text-sm text-gray-600">
-                            <span class="lang-en">Establish intelligent assessment system for AI-native creative assets using algorithms and market validation.</span>
-                            <span class="lang-zh">建立AI原生創意資產的智能評估體系，結合人工智能算法與市場驗證機制。</span>
-                        </p>
+                <!-- Floating Data Panels -->
+                <div class="absolute bottom-6 left-6 grid gap-4 pointer-events-none">
+                    <div class="bg-black/80 backdrop-blur border border-zinc-700 p-4 rounded-xl min-w-[200px]">
+                        <div class="text-[10px] text-gray-400 uppercase">Global AIF Inflow (24h)</div>
+                        <div class="text-2xl font-bold font-mono text-success" id="mapInflow">+$12.8M</div>
                     </div>
-                    <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="text-3xl mb-4">🔄</div>
-                        <h4 class="font-bold mb-2"><span class="lang-en">Circulation</span><span class="lang-zh">流通加速器</span></h4>
-                        <p class="text-sm text-gray-600">
-                            <span class="lang-en">Standardize creative assets into tradable digital copyrights, enabling efficient global circulation.</span>
-                            <span class="lang-zh">將各類創意資產標準化為可流轉的數字版權，在全球範圍內實現高效流通。</span>
-                        </p>
+                    <div class="bg-black/80 backdrop-blur border border-zinc-700 p-4 rounded-xl min-w-[200px]">
+                        <div class="text-[10px] text-gray-400 uppercase">Compute Power (T-FLOPS)</div>
+                        <div class="text-2xl font-bold font-mono text-accent" id="mapCompute">8,245</div>
                     </div>
-                    <div class="p-6 bg-gray-50 rounded-lg border border-gray-200">
-                        <div class="text-3xl mb-4">🛡️</div>
-                        <h4 class="font-bold mb-2"><span class="lang-en">Compliance</span><span class="lang-zh">合規框架</span></h4>
-                        <p class="text-sm text-gray-600">
-                            <span class="lang-en">Provide comprehensive risk management tools and operate within strict regulatory frameworks.</span>
-                            <span class="lang-zh">提供完善的風險管理工具，並在嚴格的監管框架內運營數字資產業務。</span>
-                        </p>
-                    </div>
+                </div>
+
+                <!-- Live Ticker Overlay -->
+                <div class="absolute top-6 right-6 w-64 space-y-2 pointer-events-none" id="liveTicker">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="market" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50">
-        <div class="flex justify-between items-end mb-12 reveal-text">
-            <h2 class="text-3xl font-bold tracking-tight"><span class="lang-en">Industry Background</span><span class="lang-zh">產業背景</span></h2>
-            <span class="text-xs font-mono text-gray-400">2026 Outlook</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="group bg-white border border-gray-200 p-5 rounded-xl hover:shadow-2xl hover:border-black/10 transition-all duration-500 reveal-text">
-                <div class="aspect-[4/3] bg-gray-100 mb-6 overflow-hidden rounded-lg img-zoom-container">
-                    <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Market Size" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-start mb-4">
-                    <span class="font-mono text-xs text-gray-400">01</span>
-                    <span class="px-2 py-1 bg-black text-white rounded text-[10px] font-bold font-mono">$370B</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gray-600 transition-colors"><span class="lang-en">Market Size</span><span class="lang-zh">市場規模</span></h3>
-                <p class="text-sm text-gray-500 leading-relaxed mb-6">
-                    <span class="lang-en">AI content creation market projected to reach $370 billion by 2030.</span>
-                    <span class="lang-zh">AI內容創作市場預計到2030年達到3700億美元。</span>
-                </p>
-            </div>
-            <div class="group bg-white border border-gray-200 p-5 rounded-xl hover:shadow-2xl hover:border-black/10 transition-all duration-500 reveal-text delay-100">
-                <div class="aspect-[4/3] bg-gray-100 mb-6 overflow-hidden rounded-lg img-zoom-container">
-                    <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Growth Rate" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-start mb-4">
-                    <span class="font-mono text-xs text-gray-400">02</span>
-                    <span class="px-2 py-1 bg-black text-white rounded text-[10px] font-bold font-mono">37%</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gray-600 transition-colors"><span class="lang-en">Growth Rate</span><span class="lang-zh">增長率</span></h3>
-                <p class="text-sm text-gray-500 leading-relaxed mb-6">
-                    <span class="lang-en">Annual compound growth rate of 37% in AI content creation.</span>
-                    <span class="lang-zh">AI內容創作年複合增長率達37%。</span>
-                </p>
-            </div>
-             <div class="group bg-white border border-gray-200 p-5 rounded-xl hover:shadow-2xl hover:border-black/10 transition-all duration-500 reveal-text delay-200">
-                <div class="aspect-[4/3] bg-gray-100 mb-6 overflow-hidden rounded-lg img-zoom-container">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hong Kong Advantage" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-start mb-4">
-                    <span class="font-mono text-xs text-gray-400">03</span>
-                    <span class="px-2 py-1 bg-black text-white rounded text-[10px] font-bold font-mono">HK</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gray-600 transition-colors"><span class="lang-en">Hong Kong Advantage</span><span class="lang-zh">香港優勢</span></h3>
-                <p class="text-sm text-gray-500 leading-relaxed mb-6">
-                    <span class="lang-en">Strategic position as a bridge between East and West.</span>
-                    <span class="lang-zh">作為東西方橋樑的戰略地位。</span>
-                </p>
-            </div>
-             <div class="group bg-white border border-gray-200 p-5 rounded-xl hover:shadow-2xl hover:border-black/10 transition-all duration-500 reveal-text delay-300">
-                <div class="aspect-[4/3] bg-gray-100 mb-6 overflow-hidden rounded-lg img-zoom-container">
-                    <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Creative Revolution" class="w-full h-full object-cover">
-                </div>
-                <div class="flex justify-between items-start mb-4">
-                    <span class="font-mono text-xs text-gray-400">04</span>
-                    <span class="px-2 py-1 bg-black text-white rounded text-[10px] font-bold font-mono">AI</span>
-                </div>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gray-600 transition-colors"><span class="lang-en">Creative Revolution</span><span class="lang-zh">創作革命</span></h3>
-                <p class="text-sm text-gray-500 leading-relaxed mb-6">
-                    <span class="lang-en">AI-native creation models enable efficient production.</span>
-                    <span class="lang-zh">AI原生創作模式帶來高效的生產變革。</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section id="ecosystem" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-gray-200 pb-8 reveal-text">
+    <!-- 4. Marketplace -->
+    <section id="marketplace" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50/50">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12">
             <div>
-                <h2 class="text-4xl font-bold mb-4">
-                    <span class="lang-en">Ecosystem Architecture</span><span class="lang-zh">生態體系架構</span>
-                </h2>
-                <p class="text-gray-500"><span class="lang-en">Adopting a "6+1+1" Architecture Design</span><span class="lang-zh">採用"6+1+1"的架構設計</span></p>
+                <h2 class="text-4xl font-bold mb-3" data-i18n="market_title">Project Marketplace</h2>
+                <p class="text-gray-500 text-sm max-w-xl" data-i18n="market_subtitle">Browse 16 premium AI film projects currently raising computing power. Use AIF to mint FilmTokens and govern the future of content.</p>
             </div>
-            <div class="text-right">
-                <div class="text-4xl font-bold font-mono tracking-tight">6+1+1</div>
-                <div class="text-xs uppercase tracking-widest text-gray-400 mt-1"><span class="lang-en">Platforms + Utility + Governance</span><span class="lang-zh">平台+權益+治理</span></div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-0 border border-gray-200 mb-12 reveal-text">
-            <div class="border-r border-b lg:border-b-0 border-gray-200 p-10 hover:bg-black hover:text-white transition-colors duration-300 group">
-                <span class="text-xs font-mono opacity-50 mb-6 block">01 / Education</span>
-                <h3 class="text-2xl font-bold mb-2"><span class="lang-en">HKAIFA</span><span class="lang-zh">香港AI電影學院</span></h3>
-                <p class="text-xs uppercase tracking-widest opacity-50 mb-8"><span class="lang-en">AI Film Academy</span><span class="lang-zh">AI電影學院</span></p>
-                <div class="text-5xl font-bold mb-4 font-serif italic">🎓</div>
-                <p class="text-xs opacity-50 leading-relaxed border-t border-current pt-4 group-hover:border-white/20">
-                    <span class="lang-en">Talent cultivation and skill certification platform.</span>
-                    <span class="lang-zh">人才培養與技能認證平台，建立AI創作教育品牌。</span>
-                </p>
-            </div>
-
-            <div class="border-r border-b lg:border-b-0 border-gray-200 p-10 hover:bg-black hover:text-white transition-colors duration-300 group">
-                <span class="text-xs font-mono opacity-50 mb-6 block">02 / Festival</span>
-                <h3 class="text-2xl font-bold mb-2"><span class="lang-en">HKAIIFF</span><span class="lang-zh">香港AI國際電影節</span></h3>
-                <p class="text-xs uppercase tracking-widest opacity-50 mb-8"><span class="lang-en">AI International Film Festival</span><span class="lang-zh">AI國際電影節</span></p>
-                <div class="text-5xl font-bold mb-4 font-serif italic">🏆</div>
-                <p class="text-xs opacity-50 leading-relaxed border-t border-current pt-4 group-hover:border-white/20">
-                    <span class="lang-en">Content display and value discovery platform.</span>
-                    <span class="lang-zh">內容展示與價值發現平台，AI原生內容的"價值發現引擎"。</span>
-                </p>
-            </div>
-
-            <div class="p-10 hover:bg-black hover:text-white transition-colors duration-300 group">
-                <span class="text-xs font-mono opacity-50 mb-6 block">03 / Market</span>
-                <h3 class="text-2xl font-bold mb-2"><span class="lang-en">AIF.Market</span><span class="lang-zh">AI電影市場</span></h3>
-                <p class="text-xs uppercase tracking-widest opacity-50 mb-8"><span class="lang-en">Asset Market</span><span class="lang-zh">資產市場</span></p>
-                <div class="text-5xl font-bold mb-4 font-serif italic">💎</div>
-                <p class="text-xs opacity-50 leading-relaxed border-t border-current pt-4 group-hover:border-white/20">
-                    <span class="lang-en">The "asset factory" of the ecosystem.</span>
-                    <span class="lang-zh">生態系統的"資產工廠"，數字創意資產發布平台。</span>
-                </p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 pt-8 reveal-text">
-            <div>
-                <h4 class="font-bold text-sm mb-6 pb-2 border-b border-gray-200 uppercase tracking-wider"><span class="lang-en">Services</span><span class="lang-zh">服務與設施</span></h4>
-                <ul class="space-y-4">
-                    <li class="flex justify-between items-center text-sm group">
-                        <span class="text-gray-700 group-hover:text-black font-medium"><span class="lang-en">AIF.Exchange</span><span class="lang-zh">AIF交易平台</span></span>
-                        <span class="font-mono text-gray-400">🔄</span>
-                    </li>
-                    <li class="flex justify-between items-center text-sm group">
-                        <span class="text-gray-700 group-hover:text-black font-medium"><span class="lang-en">AIF.Center</span><span class="lang-zh">全鏈條服務中心</span></span>
-                        <span class="font-mono text-gray-400">🛠️</span>
-                    </li>
-                    <li class="flex justify-between items-center text-sm group">
-                        <span class="text-gray-700 group-hover:text-black font-medium"><span class="lang-en">404.world</span><span class="lang-zh">平行世界平台</span></span>
-                        <span class="font-mono text-gray-400">🌐</span>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold text-sm mb-6 pb-2 border-b border-gray-200 uppercase tracking-wider"><span class="lang-en">Utility & Governance</span><span class="lang-zh">權益與治理</span></h4>
-                <ul class="space-y-4">
-                    <li class="flex justify-between items-center text-sm group">
-                        <span class="text-gray-700 group-hover:text-black font-medium"><span class="lang-en">AIF Utility System</span><span class="lang-zh">AIF權益體系</span></span>
-                        <span class="font-mono text-gray-400">💰</span>
-                    </li>
-                    <li class="flex justify-between items-center text-sm group">
-                        <span class="text-gray-700 group-hover:text-black font-medium"><span class="lang-en">DAO Governance</span><span class="lang-zh">DAO治理框架</span></span>
-                        <span class="font-mono text-gray-400">🗳️</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="mt-20 pt-16 border-t border-gray-200">
-            <h3 class="text-3xl font-bold text-center mb-12 reveal-text"><span class="lang-zh">AIF 體系 - 產業能源</span><span class="lang-en">AIF System - Industry Fuel</span></h3>
             
-            <div class="max-w-4xl mx-auto space-y-8">
-                <div class="p-8 bg-gray-50 rounded-xl border border-gray-200 reveal-text">
-                    <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold font-mono">AIF</div>
-                        <div class="flex-1">
-                            <h4 class="text-xl font-bold mb-3"><span class="lang-zh">基本信息</span><span class="lang-en">Basic Information</span></h4>
-                            <p class="text-gray-600 mb-4">
-                                <span class="lang-zh">屬性：AI影視算力能源憑證（數字石油） | 總量：100億（固定供應） | 機制：使用即消耗，作為生成視頻的工業原料</span>
-                                <span class="lang-en">Attribute: AI Film Computing Fuel (Digital Oil) | Total Supply: 10 Billion (Fixed) | Mechanism: Consumed upon usage, industrial raw material for generation</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex space-x-2 mt-6 md:mt-0 bg-white p-1.5 rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+                <button class="px-6 py-2.5 rounded-lg bg-black text-white shadow-md text-sm font-bold transition-all whitespace-nowrap" data-i18n="tab_issuance">Issuance (Raising)</button>
+                <button class="px-6 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-500 transition-all whitespace-nowrap" data-i18n="tab_active">Active (Dividends)</button>
+                <button class="px-6 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-500 transition-all whitespace-nowrap" data-i18n="tab_secondary">Secondary Market</button>
+            </div>
+        </div>
 
-                <div class="p-8 bg-gray-50 rounded-xl border border-gray-200 reveal-text">
-                    <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 w-12 h-12 bg-black text-white rounded-full flex items-center justify-center font-bold font-mono">💎</div>
-                        <div class="flex-1">
-                            <h4 class="text-xl font-bold mb-3"><span class="lang-zh">功能與用途</span><span class="lang-en">Functions and Uses</span></h4>
-                            <p class="text-gray-600 mb-4">
-                                <span class="lang-zh">治理功能：參與生態決策 | 實用功能：服務支付、內容解鎖、NFT鑄造 | 權益功能：參與RWA項目節點的必要條件</span>
-                                <span class="lang-en">Governance: Participate in decision making | Utility: Service payment, content unlocking, NFT minting | Rights: Necessary condition for participating in RWA project nodes</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Dynamic Grid Container -->
+        <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- JavaScript will populate this -->
+        </div>
+
+        <div class="mt-20 text-center">
+            <div class="inline-block p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <p class="text-gray-500 text-sm mb-3" data-i18n="creator_prompt">Are you an AI Film Creator?</p>
+                <a href="#creator" class="text-black font-bold border-b-2 border-black pb-0.5 hover:text-gray-600 transition-colors" data-i18n="creator_link">Go to Creator Studio (Submit Project)</a>
             </div>
         </div>
     </section>
 
-    <section id="participation" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50 border-t border-gray-200">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <div class="reveal-text">
-                <h2 class="text-3xl font-bold mb-12"><span class="lang-en">Participation Process</span><span class="lang-zh">用戶參與流程</span></h2>
-                
-                <div class="relative pl-8 border-l border-gray-200 space-y-12">
-                    <div class="relative">
-                        <span class="absolute -left-[37px] top-1 w-4 h-4 bg-black rounded-full border-2 border-white shadow-md"></span>
-                        <h4 class="text-sm font-bold uppercase mb-1"><span class="lang-en">Acquire AIF</span><span class="lang-zh">獲取AIF</span></h4>
-                        <p class="text-xs text-gray-400 font-mono mb-2">Step 1</p>
-                        <p class="text-sm text-gray-600"><span class="lang-en">Obtain AIF credits through ecosystem contribution or exchanges. Minimum: 1000 AIF</span><span class="lang-zh">通過生態貢獻或交易所獲取AIF積分。最低持有：1000 AIF</span></p>
-                    </div>
-                    <div class="relative">
-                        <span class="absolute -left-[37px] top-1 w-4 h-4 bg-gray-300 rounded-full border-2 border-white"></span>
-                        <h4 class="text-sm font-bold uppercase mb-1 text-gray-500"><span class="lang-en">Identity Verification</span><span class="lang-zh">身份認證</span></h4>
-                        <p class="text-xs text-gray-400 font-mono mb-2">Step 2</p>
-                        <p class="text-sm text-gray-500"><span class="lang-en">Submit verification documents ensuring compliance with local regulatory requirements.</span><span class="lang-zh">提交身份認證資料，確保符合各地監管要求。</span></p>
-                    </div>
-                     <div class="relative">
-                        <span class="absolute -left-[37px] top-1 w-4 h-4 bg-gray-200 rounded-full border-2 border-white"></span>
-                        <h4 class="text-sm font-bold uppercase mb-1 text-gray-400"><span class="lang-en">Activate Node</span><span class="lang-zh">激活節點</span></h4>
-                        <p class="text-xs text-gray-400 font-mono mb-2">Step 3</p>
-                        <p class="text-sm text-gray-400"><span class="lang-en">Lock AIF to activate node status and obtain ecosystem rights.</span><span class="lang-zh">鎖定AIF以激活節點身份，獲得生態權益。</span></p>
+    <!-- 5. Roadshow Center -->
+    <section id="roadshows" class="py-24 bg-black text-white relative overflow-hidden">
+        <!-- Abstract Globe Lines -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+        </div>
+
+        <div class="max-w-[1920px] mx-auto px-6 md:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/20 pb-8">
+                <div>
+                    <h2 class="text-4xl font-bold mb-4" data-i18n="roadshow_title">Roadshow Center</h2>
+                    <p class="text-gray-400 text-sm" data-i18n="roadshow_subtitle">Real World Connection. Meet the creators face-to-face.</p>
+                </div>
+                <div class="mt-6 md:mt-0 flex gap-4">
+                     <div class="flex items-center gap-2 text-xs font-mono text-accent">
+                        <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                        LIVE
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-10 rounded-2xl border border-gray-200 shadow-sm reveal-text delay-100">
-                <h3 class="text-lg font-bold mb-8"><span class="lang-en">AIF Node Rights</span><span class="lang-zh">AIF 節點權益</span></h3>
-                
-                <div class="space-y-6 mb-8">
-                    <div class="p-4 border border-gray-200 rounded-lg">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold"><span class="lang-en">Bronze Node</span><span class="lang-zh">銅牌節點</span></h4>
-                            <span class="font-mono text-gray-500">1,000 AIF</span>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 h-[600px]">
+                <!-- Featured Event Large -->
+                <div class="lg:col-span-2 relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl h-full group">
+                    <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700 transform group-hover:scale-105" alt="Roadshow Event">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent p-8 md:p-12 flex flex-col justify-end pointer-events-none">
+                        <div class="flex flex-wrap gap-3 mb-4">
+                            <span class="px-3 py-1 bg-accent text-white text-xs font-bold rounded-full">HK Central</span>
+                            <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full backdrop-blur-md">Dec 20, 2025</span>
                         </div>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li><span class="lang-en">• Participate in basic projects</span><span class="lang-zh">• 參與基礎項目</span></li>
-                            <li><span class="lang-en">• 5% computing cost discount</span><span class="lang-zh">• 享受5%算力成本折扣</span></li>
-                            <li><span class="lang-en">• Basic voting rights</span><span class="lang-zh">• 基礎投票權重</span></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="p-4 border border-gray-300 rounded-lg">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold"><span class="lang-en">Silver Node</span><span class="lang-zh">銀牌節點</span></h4>
-                            <span class="font-mono text-gray-500">10,000 AIF</span>
-                        </div>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li><span class="lang-en">• Participate in all projects</span><span class="lang-zh">• 參與所有項目</span></li>
-                            <li><span class="lang-en">• 15% computing cost discount</span><span class="lang-zh">• 享受15%算力成本折扣</span></li>
-                            <li><span class="lang-en">• Priority access</span><span class="lang-zh">• 優先參與權</span></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="p-4 border border-yellow-400 rounded-lg">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="font-bold"><span class="lang-en">Gold Node</span><span class="lang-zh">金牌節點</span></h4>
-                            <span class="font-mono text-gray-500">100,000 AIF</span>
-                        </div>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li><span class="lang-en">• VIP exclusive projects</span><span class="lang-zh">• 參與VIP專屬項目</span></li>
-                            <li><span class="lang-en">• 30% computing cost discount</span><span class="lang-zh">• 享受30%算力成本折扣</span></li>
-                            <li><span class="lang-en">• Early privileges</span><span class="lang-zh">• 早期項目特權</span></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <button class="w-full bg-black text-white py-4 rounded-full font-bold academy-btn">
-                    <span class="lang-en">Access AIF Utility</span><span class="lang-zh">獲取AIF權益</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <section id="categories" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50 border-t border-gray-200">
-        <div class="text-center mb-16 reveal-text">
-            <h2 class="text-4xl font-bold mb-6">
-                <span class="lang-en">Project Category Framework</span>
-                <span class="lang-zh">項目分類框架</span>
-            </h2>
-            <p class="text-gray-500 max-w-2xl mx-auto">
-                <span class="lang-en">Three categories with clear risk characteristics</span>
-                <span class="lang-zh">採用三大類別分類法，特徵明確</span>
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="p-8 bg-white border border-gray-200 rounded-xl reveal-text">
-                <div class="text-center mb-6">
-                    <div class="text-4xl mb-4">🏢</div>
-                    <h3 class="text-2xl font-bold text-blue-600 mb-2"><span class="lang-en">IP-RWA</span><span class="lang-zh">IP版權類</span></h3>
-                    <p class="text-sm text-gray-400">Real World Assets</p>
-                </div>
-                <p class="text-gray-600 mb-6">
-                    <span class="lang-en">Based on legal contracts and copyrights, ensuring clear ownership and usage rights.</span>
-                    <span class="lang-zh">基於現實世界的法律合約和版權，確保清晰的所有權和使用權。</span>
-                </p>
-            </div>
-
-            <div class="p-8 bg-white border border-gray-200 rounded-xl reveal-text">
-                <div class="text-center mb-6">
-                    <div class="text-4xl mb-4">🛡️</div>
-                    <h3 class="text-2xl font-bold text-purple-600 mb-2"><span class="lang-en">VDA Products</span><span class="lang-zh">VDA類產品</span></h3>
-                    <p class="text-sm text-gray-400">Verifiable Digital Assets</p>
-                </div>
-                <p class="text-gray-600 mb-6">
-                    <span class="lang-en">Digital native assets created based on verifiable technology, ensuring transparency through smart contracts.</span>
-                    <span class="lang-zh">基於可驗證技術創造的數字原生資產，通過智能合約確保透明度。</span>
-                </p>
-            </div>
-
-            <div class="p-8 bg-white border border-gray-200 rounded-xl reveal-text">
-                <div class="text-center mb-6">
-                    <div class="text-4xl mb-4">💎</div>
-                    <h3 class="text-2xl font-bold text-green-600 mb-2"><span class="lang-en">NFT Rights</span><span class="lang-zh">NFT權益類</span></h3>
-                    <p class="text-sm text-gray-400">Non-Fungible Tokens</p>
-                </div>
-                <p class="text-gray-600 mb-6">
-                    <span class="lang-en">Digital assets based on uniqueness, providing functional value, membership rights, and collection value.</span>
-                    <span class="lang-zh">基於獨特性的數字資產，主要提供功能性價值、會員權益和收藏價值。</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section id="project-list" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto">
-        <div class="text-center mb-16 reveal-text">
-            <h2 class="text-4xl font-bold mb-6">
-                <span class="lang-en">Complete Project List</span>
-                <span class="lang-zh">完整項目清單</span>
-            </h2>
-            <p class="text-gray-500 max-w-2xl mx-auto">
-                <span class="lang-en">26 innovative projects building a complete AI creative economy ecosystem</span>
-                <span class="lang-zh">26個創新項目，構建完整的AI創意經濟生態</span>
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 reveal-text">
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">1</span>
-                    <div>
-                        <div class="font-bold text-sm">SDT-VA</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Star Digital Twin License</span><span class="lang-zh">明星數字孿生授權</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">License the digital life rights of real stars as digital assets.</span>
-                    <span class="lang-zh">將真實明星的數字生命權轉化為數字資產授權。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">2</span>
-                    <div>
-                        <div class="font-bold text-sm">ADEA</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">AI Digital Life Agency</span><span class="lang-zh">AI數字生命經紀</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Management of exclusive agency rights for AI-native digital life.</span>
-                    <span class="lang-zh">AI原生數字生命的獨家經紀權管理。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">3</span>
-                    <div>
-                        <div class="font-bold text-sm">C-FIS</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Creator Future Income Rights</span><span class="lang-zh">創作者未來收益權</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Tool for creators to monetize future copyright income in advance.</span>
-                    <span class="lang-zh">幫助創作者提前變現未來版權收入的工具。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">4</span>
-                    <div>
-                        <div class="font-bold text-sm">A1C-AP</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">A1 Club Access Pass</span><span class="lang-zh">A1俱樂部通行證</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Limited-time access rights NFT for global membership club.</span>
-                    <span class="lang-zh">全球限量會員制俱樂部的限時訪問權益NFT。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">5</span>
-                    <div>
-                        <div class="font-bold text-sm">EN-NFT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Emergent Narrative Copyright</span><span class="lang-zh">湧現敘事版權</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Copyright trading for storylines co-created by users and AI.</span>
-                    <span class="lang-zh">用戶和AI共同創造的故事線的知識產權交易。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">6</span>
-                    <div>
-                        <div class="font-bold text-sm">PRP-Token</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Production Resource Token</span><span class="lang-zh">製作資源代幣</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Standardized tokens for core digital resources needed for AI film production.</span>
-                    <span class="lang-zh">AI電影製作所需核心數字資源的標準化代幣。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">7</span>
-                    <div>
-                        <div class="font-bold text-sm">DRC-NFT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Distribution Rights Contract</span><span class="lang-zh">影視發行權合約</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Smart contract NFT for regional film distribution rights.</span>
-                    <span class="lang-zh">影視作品區域發行權的標準化智能合約NFT。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">8</span>
-                    <div>
-                        <div class="font-bold text-sm">RPL-NFT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Academy Cooperation License</span><span class="lang-zh">學院合作許可證</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">License for HKAIFA franchise rights in specific regions.</span>
-                    <span class="lang-zh">HKAIFA在特定地區的特許合作權益許可。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">9</span>
-                    <div>
-                        <div class="font-bold text-sm">BPW-Deed</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Parallel World Deed</span><span class="lang-zh">平行世界地契</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Ownership and operation rights of brand-customized parallel worlds.</span>
-                    <span class="lang-zh">404.world中品牌定制平行世界的所有權和運營權。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">10</span>
-                    <div>
-                        <div class="font-bold text-sm">UGA-EW</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Award Prediction Certificate</span><span class="lang-zh">金獎預測權證</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Prediction market for HKAIIFF award outcomes.</span>
-                    <span class="lang-zh">HKAIIFF最高獎項獲獎預期的預測權益。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-lime-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">11</span>
-                    <div>
-                        <div class="font-bold text-sm">AIT-IPL</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">AI Tool IP License</span><span class="lang-zh">AI工具IP許可</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Intellectual property licensing for proprietary AI creation tools.</span>
-                    <span class="lang-zh">生態內專有AI創作工具的知識產權許可。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">12</span>
-                    <div>
-                        <div class="font-bold text-sm">UC-FRC</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">UCard Service Rights</span><span class="lang-zh">UCard服務權益</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Rights to future operating revenue from AIF UCard business.</span>
-                    <span class="lang-zh">AIF UCard業務未來運營收入的權益合約。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-violet-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">13</span>
-                    <div>
-                        <div class="font-bold text-sm">AGW-Portfolio</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Winning Film Portfolio</span><span class="lang-zh">獲獎影片資產包</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Asset package of global net revenue rights for award-winning films.</span>
-                    <span class="lang-zh">核心獲獎影片的全球淨收益權益打包。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">14</span>
-                    <div>
-                        <div class="font-bold text-sm">DSC-NFT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Digital Star Service Contract</span><span class="lang-zh">數字明星服務合約</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Standardized service contract for digital human working hours.</span>
-                    <span class="lang-zh">StarOS明星數字人未來工作時間的服務合約。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">15</span>
-                    <div>
-                        <div class="font-bold text-sm">FCS-Voucher</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Full Service Voucher</span><span class="lang-zh">全鏈條服務憑證</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Prepaid voucher for full-chain film services by AIF.Center.</span>
-                    <span class="lang-zh">AIF.Center從征集到發行的全鏈條服務預付費憑證。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-slate-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">16</span>
-                    <div>
-                        <div class="font-bold text-sm">GBL-NFT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Genesis AI Life Lease</span><span class="lang-zh">創世AI生命租賃權</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Time-sharing lease of usage rights for BeingOS genesis AI digital life.</span>
-                    <span class="lang-zh">BeingOS創世級AI數字生命的使用權分時租賃。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">17</span>
-                    <div>
-                        <div class="font-bold text-sm">CC-IPT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Course IP Token</span><span class="lang-zh">課程IP權益</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Intellectual property rights for HKAIFA certification courses.</span>
-                    <span class="lang-zh">HKAIFA認證課程的知識產權和授權權益。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-fuchsia-500 rounded-full flex items-center justify-center text-sm font-bold mr-3">18</span>
-                    <div>
-                        <div class="font-bold text-sm">GPN-License</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Payment Node Rights</span><span class="lang-zh">支付網絡節點權</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Operation node rights for AIFCARD in specific regions.</span>
-                    <span class="lang-zh">AIFCARD在特定國家或地區的運營節點權。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">19</span>
-                    <div>
-                        <div class="font-bold text-sm">CDS-RWA</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Risk Management Tool</span><span class="lang-zh">項目風險管理工具</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Decentralized risk management tools for film projects.</span>
-                    <span class="lang-zh">為AIF.Market上電影項目提供的風險管理互換工具。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">20</span>
-                    <div>
-                        <div class="font-bold text-sm">GSN-Node</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Submission Network Node</span><span class="lang-zh">征片網絡節點</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Local film submission node operation rights in key global cities.</span>
-                    <span class="lang-zh">AIF.Center在全球重點城市的地方征片節點經營權。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">21</span>
-                    <div>
-                        <div class="font-bold text-sm">STM-NFT</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">AI Skill Module</span><span class="lang-zh">AI技能模塊NFT</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Skills learned by AI Being modularized as independent NFT assets.</span>
-                    <span class="lang-zh">AI Being學習獲得的技能模塊化為獨立NFT資產。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">22</span>
-                    <div>
-                        <div class="font-bold text-sm">VVR-License</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Virtual Venue Rental</span><span class="lang-zh">虛擬場地租賃權</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Rental rights for iconic virtual performance venues in 404.world.</span>
-                    <span class="lang-zh">404.world中標誌性虛擬演出場地的租賃權。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">23</span>
-                    <div>
-                        <div class="font-bold text-sm">ADF-Collection</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">AI Director Copyrights</span><span class="lang-zh">AI導演版權集合</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Management portfolio for multiple AI director creation copyrights.</span>
-                    <span class="lang-zh">多位AI導演創作版權的集中管理組合。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">24</span>
-                    <div>
-                        <div class="font-bold text-sm">GFF-Pass</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Film Festival Alliance Pass</span><span class="lang-zh">電影節聯盟通行證</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Multi-festival use pass NFT for major global film festivals.</span>
-                    <span class="lang-zh">與全球主要電影節合作的多電影節使用通行證NFT。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">25</span>
-                    <div>
-                        <div class="font-bold text-sm">CSC-Credits</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Skill Certification Credits</span><span class="lang-zh">技能認證學分</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">HKAIFA skill certification converted into transferable credit system.</span>
-                    <span class="lang-zh">HKAIFA技能認證轉化為可流轉累積的學分體系。</span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all">
-                <div class="flex items-center mb-3">
-                    <span class="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">26</span>
-                    <div>
-                        <div class="font-bold text-sm">VAM-Service</div>
-                        <div class="text-xs text-gray-400"><span class="lang-en">Asset Management Service</span><span class="lang-zh">資產管理服務憑證</span></div>
-                    </div>
-                </div>
-                <div class="text-xs text-gray-600">
-                    <span class="lang-en">Prepaid token for professional management services.</span>
-                    <span class="lang-zh">為生態內數字資產提供專業管理服務的預付費憑證。</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="partners" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-16">
-            <div class="md:col-span-4">
-                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 reveal-text">
-                    <span class="lang-en">Official <br> Partners</span>
-                    <span class="lang-zh">官方 <br> 合作夥伴</span>
-                </h2>
-                <span class="inline-block px-3 py-1 rounded-full border border-gray-300 text-xs font-mono text-gray-500 uppercase reveal-text delay-100">// Strategic Alliances</span>
-            </div>
-            <div class="md:col-span-8">
-                <p class="text-xl font-light text-gray-600 mb-12 reveal-text">
-                    <span class="lang-en">Official authorized platform of Hong Kong AI International Film Festival, establishing strategic partnerships with leading global technology, media, and financial institutions.</span>
-                    <span class="lang-zh">香港AI國際電影節官方授權平台，與全球領先的技術、媒體和金融機構建立戰略合作關係。</span>
-                </p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 reveal-text">
-                    <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-                        <h4 class="font-bold mb-2"><span class="lang-en">AI Technology Partners</span><span class="lang-zh">AI技術合作夥伴</span></h4>
-                        <p class="text-sm text-gray-600">
-                            OpenAI, Anthropic, Midjourney, NVIDIA, Google AI, Microsoft AI.
+                        <h3 class="text-3xl md:text-5xl font-bold mb-4 leading-tight" data-i18n="featured_event_title">HKAIFM Q1 Global Roadshow</h3>
+                        <p class="text-gray-300 text-sm md:text-base max-w-2xl mb-8" data-i18n="featured_event_desc">
+                            Direct meetings with 5 top-tier AI film teams. Live demos, Q&A, and exclusive investment opportunities.
                         </p>
+                        <button class="w-fit bg-white text-black px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-200 transition-colors shadow-lg pointer-events-auto" data-i18n="btn_rsvp">
+                            RSVP Now
+                        </button>
                     </div>
-                    <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-                        <h4 class="font-bold mb-2"><span class="lang-en">Blockchain Partners</span><span class="lang-zh">區塊鏈技術夥伴</span></h4>
-                        <p class="text-sm text-gray-600">
-                            Ethereum, Polygon, Solana, Binance Smart Chain, Avalanche.
-                        </p>
-                    </div>
-                    <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-                        <h4 class="font-bold mb-2"><span class="lang-en">Supported Assets</span><span class="lang-zh">支持資產</span></h4>
-                        <p class="text-sm text-gray-600">
-                            Bitcoin, Ethereum, USDT, USDC, BNB.
-                        </p>
-                    </div>
-                    <div class="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-all">
-                        <h4 class="font-bold mb-2"><span class="lang-en">Media Partners</span><span class="lang-zh">媒體與內容夥伴</span></h4>
-                        <p class="text-sm text-gray-600">
-                            Warner Bros, Disney, Netflix, Amazon Studios.
-                        </p>
-                    </div>
+                </div>
+
+                <!-- Schedule List -->
+                <div class="lg:col-span-1 space-y-3 h-full overflow-y-auto custom-scrollbar pr-2" id="roadshowList">
+                    <!-- Populated by JS -->
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto border-t border-gray-200">
-        <div class="max-w-3xl mx-auto text-center reveal-text">
-            <h2 class="text-4xl font-bold mb-6">
-                <span class="lang-en">Start Your AI Creative Journey Now</span>
-                <span class="lang-zh">立即開始您的AI創意之旅</span>
-            </h2>
-            <p class="text-xl text-gray-500 mb-8">
-                <span class="lang-en">Join millions in building the grand vision of creative value economy in the AI era.</span>
-                <span class="lang-zh">加入百萬用戶，共同參與構建AI時代創意價值經濟的宏偉藍圖。</span>
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#" class="bg-black text-white px-8 py-4 rounded-full font-bold academy-btn text-center inline-flex items-center justify-center">
-                    <span class="lang-en">Access AIF</span>
-                    <span class="lang-zh">獲取AIF</span>
-                </a>
-                <a href="#" class="border border-black text-black px-8 py-4 rounded-full font-bold text-center inline-flex items-center justify-center hover:bg-black hover:text-white transition-all">
-                    <span class="lang-en">Download Whitepaper</span>
-                    <span class="lang-zh">下載白皮書</span>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-black text-white pt-24 pb-8 px-6 md:px-8">
+    <!-- 6. Footer -->
+    <footer class="bg-white border-t border-gray-100 pt-20 pb-10 px-6 md:px-8">
         <div class="max-w-[1920px] mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 border-t border-white/20 pt-12">
-                <div class="col-span-1 md:col-span-2">
-                    <a href="#" class="text-2xl font-bold block mb-4">HKAIFM.</a>
-                    <p class="text-gray-400 text-sm max-w-xs leading-relaxed">
-                        <span class="lang-en">Building global infrastructure for creative value economy in the AI era.</span>
-                        <span class="lang-zh">構建AI時代創意價值經濟的全球基礎設施，讓每一份創意都能找到其真實價值。</span>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                <div class="col-span-1 md:col-span-2 pr-12">
+                    <a href="#" class="text-3xl font-bold block mb-6">HKAIFM.</a>
+                    <p class="text-gray-500 text-sm max-w-sm leading-relaxed mb-6" data-i18n="footer_desc">
+                        The world's first AI-Native Film Asset Allocation Platform. Turning compute into energy, and creativity into assets.
                     </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition-colors"><i class="fab fa-discord"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition-colors"><i class="fab fa-telegram"></i></a>
+                    </div>
                 </div>
                 
                 <div>
-                    <h4 class="text-xs font-bold uppercase tracking-wider mb-4 text-gray-500">Ecosystem Platforms</h4>
-                    <ul class="space-y-3 text-sm font-medium text-gray-300">
-                        <li><a href="https://www.hkaifa.academy/#/home" class="hover:text-white"><span class="lang-en">HKAIFA - AI Film Academy</span><span class="lang-zh">HKAIFA - AI電影學院</span></a></li>
-                        <li><a href="http://www.hkaiiff.org" class="hover:text-white"><span class="lang-en">HKAIIFF - AI Film Festival</span><span class="lang-zh">HKAIIFF - AI國際電影節</span></a></li>
-                        <li><a href="#" class="hover:text-white"><span class="lang-en">AIF.Market - Asset Market</span><span class="lang-zh">AIF.Market - 資產市場</span></a></li>
-                        <li><a href="http://www.aif.exchange" class="hover:text-white"><span class="lang-en">AIF.Exchange - Exchange</span><span class="lang-zh">AIF.Exchange - 資產交易</span></a></li>
-                        <li><a href="https://www.aif.center" class="hover:text-white"><span class="lang-en">AIF.Center - Service</span><span class="lang-zh">AIF.Center - 服務中心</span></a></li>
-                        <li><a href="http://www.404.world" class="hover:text-white"><span class="lang-en">404.world - Parallel World</span><span class="lang-zh">404.world - 平行世界</span></a></li>
+                    <h4 class="font-bold text-sm mb-6 uppercase tracking-wider">Platform</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#heatmap" class="hover:text-black transition-colors">Global Heatmap</a></li>
+                        <li><a href="#marketplace" class="hover:text-black transition-colors">Marketplace</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">AIF Exchange</a></li>
+                        <li><a href="#roadshows" class="hover:text-black transition-colors">Roadshows</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-xs font-bold uppercase tracking-wider mb-4 text-gray-500">Resources</h4>
-                    <ul class="space-y-3 text-sm font-medium text-gray-300">
-                        <li><a href="#" class="hover:text-white"><span class="lang-en">Whitepaper</span><span class="lang-zh">白皮書</span></a></li>
-                        <li><a href="#" class="hover:text-white"><span class="lang-en">Technical Docs</span><span class="lang-zh">技術文檔</span></a></li>
-                        <li><a href="#" class="hover:text-white"><span class="lang-en">Tokenomics</span><span class="lang-zh">通證經濟</span></a></li>
-                        <li><a href="#" class="hover:text-white"><span class="lang-en">Risk Disclosure</span><span class="lang-zh">風險披露</span></a></li>
-                        <li><a href="#" class="hover:text-white"><span class="lang-en">Contact Support</span><span class="lang-zh">客戶支持</span></a></li>
-                        <li><a href="mailto:info@hkaiiff.org" class="hover:text-white">info@hkaiiff.org</a></li>
+                    <h4 class="font-bold text-sm mb-6 uppercase tracking-wider">Legal & Support</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-black transition-colors">Whitepaper v2.0</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">User Agreement</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Risk Disclosure</a></li>
+                        <li><a href="mailto:support@hkaifm.io" class="hover:text-black transition-colors">Contact Support</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="mt-20 flex justify-between items-end text-[10px] uppercase text-gray-500 font-mono">
-                <p>&copy; 2026 HKAIFM. All Rights Reserved.</p>
-                <p>Designed with Awwwards Aesthetics</p>
+            <div class="flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 font-mono border-t border-gray-100 pt-8">
+                <p>&copy; 2025 HKAIFM. All Rights Reserved.</p>
+                <p class="mt-2 md:mt-0">Investment involves high risks. Past performance is not indicative of future results.</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Language Toggle
-        function toggleLanguage() {
-            const body = document.body;
-            const currentLang = body.getAttribute('data-lang');
-            const newLang = currentLang === 'en' ? 'zh' : 'en';
-            body.setAttribute('data-lang', newLang);
-            localStorage.setItem('preferredLanguage', newLang);
-        }
+    <!-- 7. Detailed Project Modal -->
+    <div id="projectModal" class="fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm hidden flex items-end md:items-center justify-center p-0 md:p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white md:rounded-3xl w-full max-w-6xl h-[90vh] md:h-[85vh] overflow-hidden shadow-2xl relative flex flex-col transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <button onclick="closeProjectModal()" class="absolute top-6 right-6 w-10 h-10 bg-white/20 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-white hover:text-black z-20 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
 
-        // Intersection Observer for Reveal
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
+            <!-- Modal Body: Split Layout -->
+            <div class="flex flex-col lg:flex-row h-full">
+                
+                <!-- Left: Visual & Key Info -->
+                <div class="lg:w-7/12 h-full overflow-y-auto custom-scrollbar bg-black text-white relative">
+                    <!-- Dynamic Hero Image -->
+                    <div class="h-96 w-full relative">
+                        <img id="mImg" src="" class="w-full h-full object-cover opacity-70">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                        <div class="absolute bottom-8 left-8">
+                            <div class="flex gap-2 mb-3">
+                                <span class="px-3 py-1 bg-accent text-white text-xs font-bold rounded-full" id="mTag">Sci-Fi</span>
+                                <span class="px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full backdrop-blur-md" id="mStatus">Raising</span>
+                            </div>
+                            <h2 class="text-4xl md:text-5xl font-bold mb-2" id="mTitle">Project Title</h2>
+                            <p class="text-gray-400 text-sm font-mono" id="mTokenName">$TOKEN</p>
+                        </div>
+                    </div>
+
+                    <div class="p-8 md:p-12 space-y-12">
+                        <!-- Description -->
+                        <div>
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-info-circle"></i> <span data-i18n="modal_overview">Overview</span></h3>
+                            <p class="text-gray-300 leading-relaxed text-sm md:text-base" id="mDesc">Description...</p>
+                        </div>
+
+                        <!-- Team -->
+                        <div>
+                            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-users"></i> <span data-i18n="modal_team">Team</span></h3>
+                            <div class="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
+                                <p class="text-gray-300 text-sm" id="mTeam">Team info...</p>
+                            </div>
+                        </div>
+
+                        <!-- Tokenomics Visuals -->
+                        <div>
+                            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-chart-pie"></i> <span data-i18n="modal_tokenomics">FilmToken Allocation</span></h3>
+                            
+                            <!-- Allocation Bar -->
+                            <div class="mb-8">
+                                <div class="flex justify-between text-xs text-gray-400 mb-2">
+                                    <span>Team (Locked)</span>
+                                    <span>Public (Fundraising)</span>
+                                </div>
+                                <div class="h-4 w-full bg-zinc-800 rounded-full overflow-hidden flex">
+                                    <div class="w-[20%] h-full bg-zinc-600 border-r border-black relative group">
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">20% Team Locked</div>
+                                    </div>
+                                    <div class="w-[80%] h-full bg-accent relative group">
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">80% Public Circulation</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Usage Bar -->
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider" data-i18n="modal_usage">Use of Proceeds (AIF)</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-zinc-900 rounded-xl border-l-4 border-success">
+                                        <div class="text-2xl font-bold font-mono">70%</div>
+                                        <div class="text-xs text-gray-400 mt-1">Production (Model Token Burn)</div>
+                                    </div>
+                                    <div class="p-4 bg-zinc-900 rounded-xl border-l-4 border-warning">
+                                        <div class="text-2xl font-bold font-mono">30%</div>
+                                        <div class="text-xs text-gray-400 mt-1">AIF/FilmToken Liquidity</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Milestones & Safety Valve -->
+                        <div>
+                            <h3 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-flag-checkered"></i> <span data-i18n="modal_milestones">Milestones & NFT Rights</span></h3>
+                            <div class="relative border-l-2 border-zinc-800 pl-8 space-y-8" id="mMilestones">
+                                <!-- Populated by JS -->
+                            </div>
+                            
+                            <div class="mt-8 p-4 bg-red-900/20 border border-red-900/50 rounded-xl flex items-start gap-4">
+                                <i class="fas fa-shield-alt text-red-500 mt-1"></i>
+                                <div>
+                                    <h4 class="text-red-400 font-bold text-sm" data-i18n="modal_safety">Safety Valve Mechanism</h4>
+                                    <p class="text-red-200/60 text-xs mt-1" id="mSafetyMsg">If no production milestone is met within 6 months, all unspent AIF is automatically refunded via Smart Contract.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Action Panel -->
+                <div class="lg:w-5/12 bg-gray-50 h-full flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200">
+                    <div class="p-8 md:p-10 flex-1 overflow-y-auto custom-scrollbar">
+                        <div class="mb-8">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2" data-i18n="modal_status">Fundraising Status</span>
+                            <div class="flex items-end gap-2 mb-2">
+                                <span class="text-4xl font-bold font-mono text-black" id="mRaised">0</span>
+                                <span class="text-gray-400 text-lg mb-1">/ <span id="mGoal">0</span> AIF</span>
+                            </div>
+                            <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-black rounded-full transition-all duration-1000" style="width: 0%" id="mProgress"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                <span id="mPercent">0%</span>
+                                <span data-i18n="modal_ends">Ends in 12 days</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
+                            <h4 class="font-bold text-sm mb-4" data-i18n="modal_swap">Swap AIF for FilmToken</h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">You Pay (AIF)</label>
+                                    <div class="relative">
+                                        <input type="number" id="investInput" placeholder="0.00" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-mono text-lg focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all">
+                                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-accent hover:underline">MAX</button>
+                                    </div>
+                                    <div class="text-xs text-gray-400 mt-1 text-right">Balance: <span id="mUserBal">---</span> AIF</div>
+                                </div>
+
+                                <div class="flex justify-center text-gray-400">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-500 mb-1">You Receive (<span id="mReceiveTicker">TOKEN</span>)</label>
+                                    <input type="text" id="receiveOutput" placeholder="0.00" readonly class="w-full bg-gray-100 border border-transparent rounded-xl px-4 py-3 font-mono text-lg text-gray-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 text-xs text-gray-500 border-t border-gray-200 pt-6">
+                            <div class="flex justify-between">
+                                <span>Exchange Rate</span>
+                                <span class="font-mono font-bold">1 AIF = <span id="mRate">10</span> <span id="mRateTicker">TOKEN</span></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Network Fee</span>
+                                <span class="font-mono">0.05 AIF</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Slippage Tolerance</span>
+                                <span class="font-mono">0.5%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-8 bg-white border-t border-gray-200 shadow-[0_-5px_20px_rgba(0,0,0,0.02)] z-10">
+                        <button onclick="simulateInvest()" id="investBtn" class="w-full bg-black text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-zinc-800 hover:-translate-y-0.5 active:translate-y-0 transition-all flex justify-center items-center gap-2">
+                            <span data-i18n="modal_btn_invest">Confirm Investment</span>
+                            <i class="fas fa-bolt text-warning"></i>
+                        </button>
+                        <p class="text-[10px] text-center text-gray-400 mt-3">
+                            By confirming, you agree to the <a href="#" class="underline">Token Purchase Agreement</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Roadshow Detail Modal -->
+    <div id="roadshowModal" class="fixed inset-0 z-[160] bg-zinc-950/90 backdrop-blur-md hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-black border border-zinc-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative transform scale-95 transition-transform duration-300" id="roadshowModalContent">
+            
+            <button onclick="closeRoadshowModal()" class="absolute top-4 right-4 w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center text-white hover:bg-zinc-700 transition-colors z-20">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="relative h-48 w-full">
+                <img id="rsImg" src="" class="w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                <div class="absolute bottom-6 left-8">
+                    <span class="px-2 py-1 bg-accent text-white text-[10px] font-bold rounded mb-2 inline-block">HKAIFM Roadshow</span>
+                    <h2 class="text-2xl font-bold text-white" id="rsCity">City</h2>
+                    <p class="text-gray-400 text-xs font-mono mt-1"><i class="fas fa-calendar-alt mr-1"></i> <span id="rsDate">Date</span> &bull; <i class="fas fa-map-pin mr-1"></i> <span id="rsLoc">Location</span></p>
+                </div>
+            </div>
+
+            <div class="p-8 text-white space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold mb-2 text-white" id="rsTitle">Title</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed" id="rsDesc">Description...</p>
+                </div>
+
+                <div class="bg-zinc-900 rounded-xl p-5 border border-zinc-800">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Agenda</h4>
+                    <ul class="space-y-4 text-sm" id="rsAgenda">
+                        <!-- Agenda Items -->
+                    </ul>
+                </div>
+
+                <div class="bg-zinc-900 rounded-xl p-5 border border-zinc-800">
+                    <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Presented Projects</h4>
+                    <div class="flex flex-wrap gap-2" id="rsProjects">
+                        <!-- Project Tags -->
+                    </div>
+                </div>
+
+                <button class="w-full bg-white text-black py-3 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors">
+                    Register for Event
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-black text-white px-6 py-4 rounded-xl shadow-2xl transform translate-y-32 transition-transform duration-500 z-[200] flex items-center gap-4">
+        <div class="w-8 h-8 rounded-full bg-success flex items-center justify-center text-black">
+            <i class="fas fa-check"></i>
+        </div>
+        <div>
+            <h4 class="font-bold text-sm">Success</h4>
+            <p class="text-xs text-gray-400" id="toastMsg">Operation completed.</p>
+        </div>
+    </div>
+
+    <!-- Data & Scripts -->
+    <script>
+        // --- 1. Data Store (16 Projects + Translations) ---
+        
+        const translations = {
+            en: {
+                nav_heatmap: "Live Heatmap",
+                nav_market: "Marketplace",
+                nav_roadshow: "Roadshows",
+                nav_creator: "Creator Studio",
+                nav_assets: "My Assets",
+                btn_connect: "Connect Wallet",
+                hero_title1: "Invest in the",
+                hero_title2: "Compute & Future",
+                hero_title3: "of AI Cinema.",
+                hero_desc: "HKAIFM enables you to directly participate in the AI film industry. Exchange AIF for FilmTokens, inject computing power into premium projects, and share box office dividends, copyright revenue, and peripheral rights.",
+                hero_cta_primary: "Explore Projects",
+                hero_cta_heatmap: "Global Heatmap",
+                hero_cta_secondary: "Roadshow Center",
+                stats_title: "Live Market Data",
+                stat_fundraising: "Fundraising",
+                stat_dividends: "Total Dividends (AIF)",
+                stat_compute: "Compute Pool",
+                stat_investors: "Investors",
+                balance_label: "Your Balance",
+                top_up: "Top Up AIF",
+                map_title: "Global Compute Heatmap",
+                map_desc: "Real-time visualization of AIF injection and project growth across key creative hubs. Witness the explosion of AI cinema.",
+                market_title: "Project Marketplace",
+                market_subtitle: "Browse 16 premium AI film projects currently raising computing power. Use AIF to mint FilmTokens and govern the future of content.",
+                tab_issuance: "Issuance (Raising)",
+                tab_active: "Active (Dividends)",
+                tab_secondary: "Secondary Market",
+                creator_prompt: "Are you an AI Film Creator?",
+                creator_link: "Go to Creator Studio (Submit Project)",
+                roadshow_title: "Roadshow Center",
+                roadshow_subtitle: "Real World Connection. Meet the creators face-to-face.",
+                map_label: "Global Tour 2026",
+                map_sub: "Select a city on the right to view agenda and RSVP.",
+                btn_rsvp: "RSVP Now",
+                featured_event_title: "HKAIFM Q1 Global Roadshow",
+                featured_event_desc: "Direct meetings with 5 top-tier AI film teams. Live demos, Q&A, and exclusive investment opportunities.",
+                footer_desc: "The world's first AI-Native Film Asset Allocation Platform. Turning compute into energy, and creativity into assets.",
+                compliance_title: "HKAIFM Access Disclaimer",
+                compliance_desc1: "You are about to enter the world's first AI Film Asset Allocation Platform.",
+                compliance_desc2: "This service is governed by Hong Kong laws and is NOT available to residents of Mainland China or the United States.",
+                compliance_check1: "I am NOT a resident of Mainland China / NOT a US Citizen.",
+                compliance_check2: "I understand the risks of digital asset investment and assume full responsibility.",
+                compliance_check3: "I have read and agree to the \"User Agreement\".",
+                compliance_btn: "Confirm & Enter Platform",
+                modal_overview: "Overview",
+                modal_team: "Team",
+                modal_tokenomics: "FilmToken Allocation",
+                modal_usage: "Use of Proceeds (AIF)",
+                modal_milestones: "Milestones & NFT Rights",
+                modal_safety: "Safety Valve Mechanism",
+                modal_status: "Fundraising Status",
+                modal_ends: "Ends in 12 days",
+                modal_swap: "Swap AIF for FilmToken",
+                modal_btn_invest: "Confirm Investment"
+            },
+            zh: {
+                nav_heatmap: "全球熱度",
+                nav_market: "投資市場",
+                nav_roadshow: "路演中心",
+                nav_creator: "創作者後台",
+                nav_assets: "我的資產",
+                btn_connect: "連接錢包",
+                hero_title1: "投資 AI 電影的",
+                hero_title2: "算力與未來",
+                hero_title3: "", 
+                hero_desc: "HKAIFM 讓您直接參與 AI 電影產業。使用 AIF 兌換 FilmToken，為優質項目注入算力能源，共享票房分紅、版權交易收益及周邊權益。",
+                hero_cta_primary: "瀏覽項目",
+                hero_cta_heatmap: "全球熱度地圖",
+                hero_cta_secondary: "路演中心",
+                stats_title: "市場實時數據",
+                stat_fundraising: "募資中項目",
+                stat_dividends: "累計分紅 (AIF)",
+                stat_compute: "算力池規模",
+                stat_investors: "活躍投資人",
+                balance_label: "AIF 餘額",
+                top_up: "充值 AIF",
+                map_title: "全球 AI 算力熱度地圖",
+                map_desc: "實時可視化 AIF 注入和全球創意中心的項目增長。見證 AI 電影產業的爆發。",
+                market_title: "項目市場",
+                market_subtitle: "瀏覽 16 個正在募集算力的頂級 AI 電影項目。用 AIF 鑄造 FilmToken，決定內容的未來。",
+                tab_issuance: "正在募資 (Issuance)",
+                tab_active: "分紅中 (Active)",
+                tab_secondary: "二級市場",
+                creator_prompt: "您是 AI 電影創作者？",
+                creator_link: "前往創作者後台 (發布項目)",
+                roadshow_title: "路演中心",
+                roadshow_subtitle: "Real World Connection. 與創作者面對面。",
+                map_label: "2026 全球巡迴",
+                map_sub: "點擊右側城市查看詳細議程與預約。",
+                btn_rsvp: "立即預約",
+                featured_event_title: "HKAIFM Q1 全球路演",
+                featured_event_desc: "與5個頂級AI電影團隊面對面交流。現場演示、問答環節及專屬投資機會。",
+                footer_desc: "全球首個 AI 原生電影資產配置平台。讓算力成為能源，讓創意成為資產。",
+                compliance_title: "HKAIFM 訪問聲明",
+                compliance_desc1: "您即將進入全球首個 AI 電影資產配置平台。",
+                compliance_desc2: "本服務受香港法律管轄，不向中國大陸及美國居民提供服務。",
+                compliance_check1: "本人非中國大陸居民 / 非美國公民。",
+                compliance_check2: "本人知悉數字資產投資風險，自願承擔。",
+                compliance_check3: "我已閱讀並同意《用戶協議》。",
+                compliance_btn: "確認並進入平台",
+                modal_overview: "項目概覽",
+                modal_team: "團隊背景",
+                modal_tokenomics: "FilmToken 分配模型",
+                modal_usage: "資金/算力用途 (AIF)",
+                modal_milestones: "里程碑與 NFT 確權",
+                modal_safety: "安全閥機制",
+                modal_status: "募資進度",
+                modal_ends: "12天後結束",
+                modal_swap: "AIF 兌換 FilmToken",
+                modal_btn_invest: "確認投資"
+            }
+        };
+
+        const projects = [
+            {
+                id: 1,
+                title: "Neon Genesis: The Awakening",
+                token: "NEON",
+                genre: "Sci-Fi / Cyberpunk",
+                image: "https://images.unsplash.com/photo-1614728263952-84ea256f9679?q=80&w=1908&auto=format&fit=crop",
+                raised: 450000,
+                goal: 600000,
+                totalSupply: "10,000,000",
+                rate: 16.6,
+                desc_en: "A sprawling cyberpunk saga generated entirely by Unreal Engine 5 and custom LLMs. Set in Neo-HK 2099, it explores the first AI gaining consciousness.",
+                desc_zh: "一部完全由 Unreal Engine 5 和定製 LLM 生成的宏大賽博朋克史詩。故事背景設定在 2099 年的新香港，探索第一個獲得意識的 AI。",
+                team_en: "Led by ex-ILM VFX supervisors and top prompt engineers from Silicon Valley.",
+                team_zh: "由前工業光魔特效總監領銜，匯聚硅谷頂級提示詞工程師。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Script Generation & Concept NFT Mint", event_zh: "劇本生成 & 概念 NFT 鑄造" },
+                    { date: "2026 Q2", event_en: "Character Model Training Completed", event_zh: "角色模型訓練完成" },
+                    { date: "2026 Q3", event_en: "Global Premiere & Box Office Dividend", event_zh: "全球首映 & 票房分紅啟動" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Echoes of Eternity",
+                token: "ECHO",
+                genre: "Documentary / AI",
+                image: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2070&auto=format&fit=crop",
+                raised: 120000,
+                goal: 300000,
+                totalSupply: "5,000,000",
+                rate: 16.6,
+                desc_en: "A deep dive into the history of human consciousness, reconstructed using AI to visualize lost historical events.",
+                desc_zh: "深入探索人類意識的歷史，利用 AI 重建並可視化失落的歷史事件。",
+                team_en: "Directed by award-winning documentary filmmaker Sarah Chen.",
+                team_zh: "由獲獎紀錄片導演 Sarah Chen 執導。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Historical Data Training", event_zh: "歷史數據訓練" },
+                    { date: "2026 Q3", event_en: "Feature Release", event_zh: "正片發布" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Pixel Hearts: Virtual Idol",
+                token: "HEART",
+                genre: "Animation / Music",
+                image: "https://images.unsplash.com/photo-1632213702844-1e0615781374?q=80&w=2064&auto=format&fit=crop",
+                raised: 780000,
+                goal: 800000,
+                totalSupply: "100,000,000",
+                rate: 125,
+                desc_en: "Creating the world's first decentralized AI virtual idol group. Token holders vote on songs and outfits.",
+                desc_zh: "打造全球首個去中心化 AI 虛擬偶像團體。代幣持有者投票決定歌曲和服裝。",
+                team_en: "Tokyo-based team specializing in Vocaloid and AI voice synthesis.",
+                team_zh: "專注於 Vocaloid 和 AI 語音合成的東京團隊。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Debut Single Release", event_zh: "首張單曲發布" },
+                    { date: "2026 Q2", event_en: "VR Concert", event_zh: "VR 演唱會" }
+                ]
+            },
+            {
+                id: 4,
+                title: "The Silent Void",
+                token: "VOID",
+                genre: "Thriller / Horror",
+                image: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1937&auto=format&fit=crop",
+                raised: 50000,
+                goal: 150000,
+                totalSupply: "3,000,000",
+                rate: 20,
+                desc_en: "An AI-generated horror movie that adapts to the viewer's fears using bio-feedback data.",
+                desc_zh: "一部 AI 生成的恐怖電影，能根據觀眾的生物反饋數據調整恐怖元素。",
+                team_en: "Psychologists and AI engineers collaboration.",
+                team_zh: "心理學家與 AI 工程師的跨界合作。",
+                milestones: [
+                    { date: "2026 Q2", event_en: "Bio-feedback App Launch", event_zh: "生物反饋 App 上線" }
+                ]
+            },
+            {
+                id: 5,
+                title: "Dynasty Reborn",
+                token: "DYNA",
+                genre: "Historical / Action",
+                image: "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?q=80&w=2070&auto=format&fit=crop",
+                raised: 200000,
+                goal: 500000,
+                totalSupply: "8,000,000",
+                rate: 16,
+                desc_en: "Restoring the grandeur of the Tang Dynasty using 3D Gaussian Splatting and AI architectural generation.",
+                desc_zh: "利用 3D Gaussian Splatting 和 AI 建築生成技術，重現大唐盛世的輝煌。",
+                team_en: "Beijing Cultural Heritage Lab.",
+                team_zh: "北京文化遺產實驗室。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Chang'an City Model Complete", event_zh: "長安城模型構建完成" }
+                ]
+            },
+            {
+                id: 6,
+                title: "Mars: The First Colony",
+                token: "MARS",
+                genre: "Sci-Fi / Simulation",
+                image: "https://images.unsplash.com/photo-1541873676-a18131494184?q=80&w=2036&auto=format&fit=crop",
+                raised: 300000,
+                goal: 1000000,
+                totalSupply: "20,000,000",
+                rate: 20,
+                desc_en: "A realistic simulation of Mars colonization. The script evolves based on real scientific data.",
+                desc_zh: "火星殖民的真實模擬。劇本根據真實的科學數據演變。",
+                team_en: "Advisors from NASA and SpaceX communities.",
+                team_zh: "來自 NASA 和 SpaceX 社區的顧問團隊。",
+                milestones: [
+                    { date: "2026 Q2", event_en: "Physics Engine Integration", event_zh: "物理引擎整合" }
+                ]
+            },
+            {
+                id: 7,
+                title: "Love Algorithm",
+                token: "LUV",
+                genre: "Romance / Interactive",
+                image: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=1887&auto=format&fit=crop",
+                raised: 80000,
+                goal: 200000,
+                totalSupply: "4,000,000",
+                rate: 20,
+                desc_en: "An interactive dating movie where you choose the dialogue. Powered by real-time NLP.",
+                desc_zh: "一部互動式戀愛電影，由你選擇對話。由實時 NLP 技術驅動。",
+                team_en: "Indie game developers from Seoul.",
+                team_zh: "來自首爾的獨立遊戲開發者。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Beta Interaction Test", event_zh: "Beta 互動測試" }
+                ]
+            },
+            {
+                id: 8,
+                title: "Shadows of Gotham",
+                token: "BAT",
+                genre: "Fan-Film / Noir",
+                image: "https://images.unsplash.com/photo-1517771778436-39f5763f5270?q=80&w=1974&auto=format&fit=crop",
+                raised: 150000,
+                goal: 300000,
+                totalSupply: "6,000,000",
+                rate: 20,
+                desc_en: "A noir detective story generated in the style of 1940s comics.",
+                desc_zh: "一部以 1940 年代漫畫風格生成的黑色偵探故事。",
+                team_en: "Community driven fan club.",
+                team_zh: "社區驅動的粉絲俱樂部。",
+                milestones: [
+                    { date: "2026 Q3", event_en: "Style Transfer Model Finalized", event_zh: "風格遷移模型定稿" }
+                ]
+            },
+            {
+                id: 9,
+                title: "The Alchemist's Dream",
+                token: "GOLD",
+                genre: "Fantasy",
+                image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1868&auto=format&fit=crop",
+                raised: 220000,
+                goal: 400000,
+                totalSupply: "8,000,000",
+                rate: 20,
+                desc_en: "High fantasy world building. AI generates new creatures and magic spells daily.",
+                desc_zh: "高魔奇幻世界構建。AI 每天生成新的生物和魔法咒語。",
+                team_en: "Weta Workshop alumni.",
+                team_zh: "維塔工作室前成員。",
+                milestones: [
+                    { date: "2026 Q2", event_en: "Creature Codex NFT Drop", event_zh: "生物圖鑑 NFT 空投" }
+                ]
+            },
+            {
+                id: 10,
+                title: "Deep Blue Mystery",
+                token: "BLUE",
+                genre: "Mystery / Ocean",
+                image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=2070&auto=format&fit=crop",
+                raised: 90000,
+                goal: 250000,
+                totalSupply: "5,000,000",
+                rate: 20,
+                desc_en: "Solving crimes in an underwater city. Visuals generated using fluid dynamics AI.",
+                desc_zh: "在水下城市破案。視覺效果使用流體動力學 AI 生成。",
+                team_en: "Oceanography enthusiasts and CGI artists.",
+                team_zh: "海洋學愛好者和 CGI 藝術家。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Environment Render", event_zh: "環境渲染完成" }
+                ]
+            },
+            {
+                id: 11,
+                title: "Abstract Minds",
+                token: "MIND",
+                genre: "Art House",
+                image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop",
+                raised: 30000,
+                goal: 100000,
+                totalSupply: "1,000,000",
+                rate: 10,
+                desc_en: "Visualizing thoughts and dreams. A non-narrative audio-visual experience.",
+                desc_zh: "將思想和夢境可視化。非敘事性的視聽體驗。",
+                team_en: "Avant-garde AI artists collective.",
+                team_zh: "先鋒 AI 藝術家集體。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Gallery Exhibition", event_zh: "畫廊展覽" }
+                ]
+            },
+            {
+                id: 12,
+                title: "Cyber Vigilante",
+                token: "JUST",
+                genre: "Action",
+                image: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070&auto=format&fit=crop",
+                raised: 350000,
+                goal: 700000,
+                totalSupply: "14,000,000",
+                rate: 20,
+                desc_en: "High octane action sequences choreographed by AI.",
+                desc_zh: "由 AI 編排的高燃動作場面。",
+                team_en: "Action choreographers and stunt coordinators.",
+                team_zh: "動作指導和特技協調員。",
+                milestones: [
+                    { date: "2026 Q2", event_en: "Action Pre-viz", event_zh: "動作預演" }
+                ]
+            },
+            {
+                id: 13,
+                title: "Laugh Track 3000",
+                token: "LOL",
+                genre: "Comedy",
+                image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop",
+                raised: 180000,
+                goal: 400000,
+                totalSupply: "8,000,000",
+                rate: 20,
+                desc_en: "An infinite sitcom that never ends, generating jokes based on current news.",
+                desc_zh: "一部永不結束的無限情景喜劇，根據當前新聞生成笑話。",
+                team_en: "Comedy writers and LLM fine-tuners.",
+                team_zh: "喜劇作家和 LLM 微調師。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Pilot Episode Live Stream", event_zh: "試播集直播" }
+                ]
+            },
+            {
+                id: 14,
+                title: "Sonic Visions",
+                token: "SONIC",
+                genre: "Music Video",
+                image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop",
+                raised: 60000,
+                goal: 120000,
+                totalSupply: "2,000,000",
+                rate: 16.6,
+                desc_en: "Visualizing music albums using AI video generation.",
+                desc_zh: "利用 AI 視頻生成技術將音樂專輯可視化。",
+                team_en: "Indie Musicians DAO.",
+                team_zh: "獨立音樂人 DAO。",
+                milestones: [
+                    { date: "2026 Q2", event_en: "Album Launch", event_zh: "專輯發布" }
+                ]
+            },
+            {
+                id: 15,
+                title: "Micro-Stories Anthology",
+                token: "TINY",
+                genre: "Anthology",
+                image: "https://images.unsplash.com/photo-1519791883288-dc8bd696e667?q=80&w=2070&auto=format&fit=crop",
+                raised: 95000,
+                goal: 200000,
+                totalSupply: "4,000,000",
+                rate: 20,
+                desc_en: "A collection of 100 AI generated short films, each 1 minute long.",
+                desc_zh: "100 部 AI 生成的短片合集，每部 1 分鐘。",
+                team_en: "Short film festival curators.",
+                team_zh: "短片電影節策展人。",
+                milestones: [
+                    { date: "2026 Q1", event_en: "Selection Process", event_zh: "選片流程" }
+                ]
+            },
+            {
+                id: 16,
+                title: "The Infinite Narrative",
+                token: "INF",
+                genre: "Experimental",
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop",
+                raised: 110000,
+                goal: 300000,
+                totalSupply: "6,000,000",
+                rate: 20,
+                desc_en: "A story that changes every time you watch it.",
+                desc_zh: "每次觀看都會改變的故事。",
+                team_en: "Generative AI Researchers.",
+                team_zh: "生成式 AI 研究員。",
+                milestones: [
+                    { date: "2026 Q3", event_en: "Engine Release", event_zh: "引擎發布" }
+                ]
+            }
+        ];
+
+        const roadshows = [
+            { 
+                city: "Hong Kong", date: "Dec 20, 2025", location: "K11 Musea", 
+                title_en: "HKAIFM Genesis Launch", title_zh: "HKAIFM 創世發布會",
+                image: "https://images.unsplash.com/photo-1506318137071-a8bcbf6b925d?q=80&w=1932&auto=format&fit=crop",
+                desc_en: "The inaugural launch event for HKAIFM. Join us as we unveil the first batch of AI-native film projects. Exclusive networking with the platform founders.",
+                desc_zh: "HKAIFM 的首次發布活動。與我們一起見證首批 AI 原生電影項目的揭幕。與平台創始人獨家交流。",
+                agenda: ["14:00 - Registration", "14:30 - Keynote: The Future of AI Cinema", "15:30 - Project Demos", "17:00 - Networking Mixer"],
+                projects: ["Neon Genesis", "Echoes of Eternity"]
+            },
+            { 
+                city: "Singapore", date: "Jan 15, 2026", location: "Marina Bay Sands", 
+                title_en: "Singapore Roadshow: Pixel Hearts Live", title_zh: "新加坡路演：Pixel Hearts 現場",
+                image: "https://images.unsplash.com/photo-1565967568715-22368297a72b?q=80&w=2070&auto=format&fit=crop",
+                desc_en: "Connecting the SE Asia film community with AI technology. Featuring live demonstration of Pixel Hearts virtual idol technology.",
+                desc_zh: "連接東南亞電影社區與 AI 技術。現場演示 Pixel Hearts 虛擬偶像技術。",
+                agenda: ["10:00 - Opening Ceremony", "11:00 - Demo: Real-time MoCap", "14:00 - Investor Pitching", "16:00 - Private Meeting"],
+                projects: ["Pixel Hearts", "Love Algorithm"]
+            },
+            { 
+                city: "Tokyo", date: "Feb 02, 2026", location: "Roppongi Hills", 
+                title_en: "Tokyo Demo Day: Micro-Stories", title_zh: "東京演示日：微故事系列",
+                image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1887&auto=format&fit=crop",
+                desc_en: "A deep dive into the 'Micro-Stories Anthology'. Experience the VR concert capabilities live.",
+                desc_zh: "深入了解“微故事合集”。現場體驗 VR 內容生成。",
+                agenda: ["18:00 - VR Setup", "19:00 - Live Generation", "20:00 - Q&A with Developers"],
+                projects: ["Pixel Hearts", "Micro-Stories Anthology"]
+            },
+            { 
+                city: "New York", date: "Feb 28, 2026", location: "Javits Center", 
+                title_en: "NYC Roadshow: Shadows of Gotham Team Meet", title_zh: "紐約路演：Shadows of Gotham 團隊見面會",
+                image: "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e9?q=80&w=2070&auto=format&fit=crop",
+                desc_en: "Meet the creators behind the noir detective story. Exclusive preview of the style transfer model.",
+                desc_zh: "與黑色偵探故事背後的創作者見面。獨家預覽風格遷移模型。",
+                agenda: ["13:00 - Director Presentation", "15:00 - Project: Shadows of Gotham", "17:00 - Cocktails"],
+                projects: ["Shadows of Gotham", "Laugh Track 3000"]
+            },
+            { 
+                city: "London", date: "Mar 10, 2026", location: "BFI Southbank", 
+                title_en: "London Premiere Roadshow: Deep Blue Mystery", title_zh: "倫敦首映路演：Deep Blue Mystery",
+                image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop",
+                desc_en: "World premiere of the first act of Deep Blue Mystery. Director Q&A and fluid dynamics tech demo.",
+                desc_zh: "Deep Blue Mystery 第一幕全球首映。導演問答與流體動力學技術演示。",
+                agenda: ["09:00 - Tech Setup", "11:00 - Premiere Screening", "14:00 - Investor 1-on-1"],
+                projects: ["Deep Blue Mystery", "Abstract Minds"]
+            },
+            { 
+                city: "Dubai", date: "Mar 25, 2026", location: "Museum of the Future", 
+                title_en: "Dubai Investment Roadshow: Dynasty Reborn", title_zh: "迪拜投資路演：Dynasty Reborn",
+                image: "https://images.unsplash.com/photo-1512453979798-5ea904ac6605?q=80&w=2070&auto=format&fit=crop",
+                desc_en: "Showcasing 'Dynasty Reborn' and the potential of historical reconstruction via AI. Exclusive asset auction.",
+                desc_zh: "展示“Dynasty Reborn”以及 AI 在歷史重建方面的潛力。獨家資產拍賣。",
+                agenda: ["15:00 - Historical AI Tech", "16:30 - Dynasty Reborn Premiere", "19:00 - Gala Dinner"],
+                projects: ["Dynasty Reborn", "Sonic Visions"]
+            },
+            { 
+                city: "Seoul", date: "Apr 05, 2026", location: "DDP", 
+                title_en: "Seoul Roadshow: Love Algorithm Cast Meeting", title_zh: "首爾路演：Love Algorithm 演員見面會",
+                image: "https://images.unsplash.com/photo-1538485399081-7191377e8241?q=80&w=1974&auto=format&fit=crop",
+                desc_en: "Meet the digital human cast of Love Algorithm. Live interactive script demo.",
+                desc_zh: "與 Love Algorithm 的數字人演員見面。現場互動劇本演示。",
+                agenda: ["10:00 - K-Drama AI Tools", "13:00 - Interactive Scripting Demo", "15:00 - Casting Call"],
+                projects: ["Love Algorithm", "The Silent Void"]
+            },
+            { 
+                city: "Paris", date: "Apr 20, 2026", location: "La Cinémathèque", 
+                title_en: "Paris Director Roadshow: The Infinite Narrative", title_zh: "巴黎導演路演：The Infinite Narrative",
+                image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop",
+                desc_en: "An experimental evening featuring avant-garde AI art films and director Q&A.",
+                desc_zh: "以前衛 AI 藝術電影為特色的實驗之夜及導演問答。",
+                agenda: ["18:00 - Art Installation", "19:30 - Screening: The Infinite Narrative", "21:00 - Director Q&A"],
+                projects: ["The Infinite Narrative", "Abstract Minds"]
+            }
+        ];
+
+        // --- 2. State Management ---
+        let currentLang = 'en'; // Default English
+        let isConnected = false;
+
+        // --- 3. Render Functions ---
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            
+            // Update Navbar Button Text
+            document.querySelectorAll('.lang-text').forEach(el => {
+                el.innerText = currentLang === 'en' ? '繁體中文' : 'English';
+            });
+
+            // Update Static Text
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key] !== undefined) {
+                    el.innerText = translations[currentLang][key];
                 }
             });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
 
-        // Initialize on DOM Load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set language from localStorage
-            const savedLang = localStorage.getItem('preferredLanguage');
-            if (savedLang) {
-                document.body.setAttribute('data-lang', savedLang);
-            }
+            // Re-render Dynamic Content
+            renderProjects();
+            renderRoadshows();
+        }
 
-            // Observe all reveal elements
-            document.querySelectorAll('.reveal-text').forEach(el => {
-                observer.observe(el);
+        function renderProjects() {
+            const grid = document.getElementById('projectGrid');
+            grid.innerHTML = '';
+
+            projects.forEach((p, index) => {
+                const progress = Math.round((p.raised / p.goal) * 100);
+                const title = currentLang === 'en' ? p.title : (p.title_zh || p.title); // Fallback logic
+                const desc = currentLang === 'en' ? p.desc_en : p.desc_zh;
+                
+                const card = `
+                    <div class="project-card bg-white border border-gray-200 rounded-2xl overflow-hidden flex flex-col group h-full hover:border-black transition-all cursor-pointer" onclick="openProjectModal(${index})">
+                        <div class="relative h-56 bg-zinc-900 overflow-hidden">
+                            <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90" alt="${title}">
+                            <div class="absolute top-3 left-3 flex gap-2">
+                                <span class="bg-black/80 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider border border-white/10">Raising</span>
+                            </div>
+                            <div class="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black to-transparent p-5 flex flex-col justify-end">
+                                <div class="text-gray-300 text-xs font-mono mb-1">${p.genre}</div>
+                                <h3 class="text-white text-lg font-bold leading-tight">${title}</h3>
+                            </div>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col">
+                            <div class="mb-4">
+                                <div class="flex justify-between text-xs text-gray-500 mb-1 font-mono">
+                                    <span>${progress}% Funded</span>
+                                    <span class="text-black font-bold">${p.raised.toLocaleString()} AIF</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-full bg-black rounded-full" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 mb-4 border-b border-gray-100 pb-4">
+                                <div>
+                                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Goal</div>
+                                    <div class="font-bold font-mono text-sm">${(p.goal/1000).toFixed(0)}k AIF</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-gray-400 uppercase tracking-wider">Token</div>
+                                    <div class="font-bold font-mono text-sm">$${p.token}</div>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-gray-500 mb-5 line-clamp-2 leading-relaxed flex-1">
+                                ${desc}
+                            </p>
+                            
+                            <button class="mt-auto w-full border border-black text-black py-2.5 rounded-xl font-bold text-xs hover:bg-black hover:text-white transition-colors uppercase tracking-wide">
+                                ${currentLang === 'en' ? 'View Details & Invest' : '查看詳情 & 投資'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
             });
-        });
+        }
 
-        // --- Compliance Modal Logic ---
+        function renderRoadshows() {
+            const list = document.getElementById('roadshowList');
+            list.innerHTML = '';
+
+            roadshows.forEach((r, index) => {
+                const title = currentLang === 'en' ? r.title_en : r.title_zh;
+                const item = `
+                    <div class="roadshow-item p-6 bg-zinc-900 border border-white/10 rounded-2xl cursor-pointer group" onclick="openRoadshowModal(${index})">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-xs text-accent font-bold font-mono">${r.date}</div>
+                            <div class="text-xs text-gray-500">${r.city}</div>
+                        </div>
+                        <h4 class="font-bold text-lg mb-1 group-hover:text-white text-gray-200 transition-colors">${title}</h4>
+                        <p class="text-xs text-gray-500 flex items-center gap-1">
+                            <i class="fas fa-map-marker-alt"></i> ${r.location}
+                        </p>
+                        <div class="mt-4 flex justify-end">
+                            <span class="text-[10px] text-accent font-bold uppercase tracking-wider group-hover:underline">View Agenda &rarr;</span>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += item;
+            });
+        }
+
+        // --- 4. Modal Logic ---
+        
+        const modal = document.getElementById('projectModal');
+        const modalContent = document.getElementById('modalContent');
+        const mainBody = document.getElementById('mainBody');
+
+        function openProjectModal(index) {
+            const p = projects[index];
+            const percent = Math.round((p.raised / p.goal) * 100);
+
+            // Populate Data
+            document.getElementById('mImg').src = p.image;
+            document.getElementById('mTitle').innerText = currentLang === 'en' ? p.title : p.title_zh || p.title;
+            document.getElementById('mDesc').innerText = currentLang === 'en' ? p.desc_en : p.desc_zh;
+            document.getElementById('mTeam').innerText = currentLang === 'en' ? p.team_en : p.team_zh;
+            document.getElementById('mTag').innerText = p.genre;
+            document.getElementById('mTokenName').innerText = "$" + p.token;
+            
+            document.getElementById('mRaised').innerText = p.raised.toLocaleString();
+            document.getElementById('mGoal').innerText = p.goal.toLocaleString();
+            document.getElementById('mProgress').style.width = percent + "%";
+            document.getElementById('mPercent').innerText = percent + "%";
+
+            // Milestones Render
+            const mContainer = document.getElementById('mMilestones');
+            mContainer.innerHTML = '';
+            p.milestones.forEach(m => {
+                const event = currentLang === 'en' ? m.event_en : m.event_zh;
+                mContainer.innerHTML += `
+                    <div class="relative">
+                        <div class="absolute -left-[41px] top-1 w-5 h-5 bg-black rounded-full border-4 border-white"></div>
+                        <div class="text-xs font-mono text-gray-400 mb-1">${m.date}</div>
+                        <div class="text-sm font-bold text-gray-800">${event}</div>
+                        <div class="inline-block mt-2 px-2 py-0.5 bg-purple-100 text-purple-600 text-[10px] font-bold rounded border border-purple-200">
+                            <i class="fas fa-cube"></i> NFT Snapshot
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Swap Logic
+            document.getElementById('mReceiveTicker').innerText = p.token;
+            document.getElementById('mRateTicker').innerText = p.token;
+            document.getElementById('mRate').innerText = p.rate;
+            
+            const input = document.getElementById('investInput');
+            const output = document.getElementById('receiveOutput');
+            input.value = '';
+            output.value = '';
+            
+            input.oninput = () => {
+                output.value = (input.value * p.rate).toFixed(2);
+            };
+
+            // Show Modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeProjectModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // --- Roadshow Modal Logic ---
+        const rsModal = document.getElementById('roadshowModal');
+        const rsContent = document.getElementById('roadshowModalContent');
+
+        function openRoadshowModal(index) {
+            const r = roadshows[index];
+            const title = currentLang === 'en' ? r.title_en : r.title_zh;
+            const desc = currentLang === 'en' ? r.desc_en : r.desc_zh;
+
+            document.getElementById('rsCity').innerText = r.city;
+            document.getElementById('rsDate').innerText = r.date;
+            document.getElementById('rsLoc').innerText = r.location;
+            document.getElementById('rsTitle').innerText = title;
+            document.getElementById('rsDesc').innerText = desc;
+            document.getElementById('rsImg').src = r.image;
+
+            const agendaList = document.getElementById('rsAgenda');
+            agendaList.innerHTML = '';
+            r.agenda.forEach(item => {
+                agendaList.innerHTML += `<li class="flex items-start gap-3"><span class="w-1.5 h-1.5 bg-accent rounded-full mt-2"></span><span>${item}</span></li>`;
+            });
+
+            const projectTags = document.getElementById('rsProjects');
+            projectTags.innerHTML = '';
+            r.projects.forEach(p => {
+                projectTags.innerHTML += `<span class="px-3 py-1 bg-zinc-800 text-gray-300 text-xs rounded-full border border-zinc-700">${p}</span>`;
+            });
+
+            rsModal.classList.remove('hidden');
+            setTimeout(() => {
+                rsModal.classList.remove('opacity-0');
+                rsContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeRoadshowModal() {
+            rsModal.classList.add('opacity-0');
+            rsContent.classList.add('scale-95');
+            setTimeout(() => {
+                rsModal.classList.add('hidden');
+            }, 300);
+        }
+
+        // --- 5. Interaction Logic ---
+
+        function connectWallet() {
+            if(isConnected) return;
+            const btn = document.getElementById('walletBtn');
+            const txt = document.getElementById('walletText');
+            
+            txt.innerText = 'Connecting...';
+            
+            setTimeout(() => {
+                isConnected = true;
+                txt.innerText = '0x3F...82A1';
+                
+                // Show balances
+                const bal = "12,450";
+                document.getElementById('userBalanceDisplay').innerText = bal;
+                document.getElementById('mUserBal').innerText = bal;
+                
+                // Style update
+                btn.classList.replace('bg-black', 'bg-white');
+                btn.classList.replace('text-white', 'text-black');
+                btn.classList.add('border', 'border-gray-200');
+                
+                showToast(currentLang === 'en' ? 'Wallet Connected via MagicLink' : '錢包已通過 MagicLink 連接');
+            }, 1500);
+        }
+
+        function simulateInvest() {
+            if(!isConnected) {
+                alert(currentLang === 'en' ? 'Please connect wallet first.' : '請先連接錢包');
+                return;
+            }
+            const input = document.getElementById('investInput');
+            if(!input.value) return;
+
+            const btn = document.getElementById('investBtn');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Processing...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                closeProjectModal();
+                showToast(currentLang === 'en' ? `Success! Minted ${document.getElementById('receiveOutput').value} ${document.getElementById('mReceiveTicker').innerText}` : `成功！已鑄造 ${document.getElementById('receiveOutput').value} ${document.getElementById('mReceiveTicker').innerText}`);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('translate-y-32');
+            setTimeout(() => toast.classList.add('translate-y-32'), 3000);
+        }
+
+        // Compliance
         const complianceChecks = document.querySelectorAll('.compliance-check');
         const complianceBtn = document.getElementById('complianceBtn');
         const complianceModal = document.getElementById('complianceModal');
-        const mainBody = document.getElementById('mainBody');
 
         complianceChecks.forEach(check => {
-            check.addEventListener('change', validateCompliance);
+            check.addEventListener('change', () => {
+                const allChecked = Array.from(complianceChecks).every(c => c.checked);
+                complianceBtn.disabled = !allChecked;
+            });
         });
-
-        function validateCompliance() {
-            const allChecked = Array.from(complianceChecks).every(c => c.checked);
-            complianceBtn.disabled = !allChecked;
-        }
 
         function acceptCompliance() {
             complianceModal.style.opacity = '0';
-            complianceModal.style.transition = 'opacity 0.5s ease';
             setTimeout(() => {
                 complianceModal.classList.add('hidden');
-                // Enable scrolling on body
                 mainBody.classList.remove('overflow-hidden');
             }, 500);
         }
+
+        // Live Ticker Logic
+        const liveTicker = document.getElementById('liveTicker');
+        const cities = ["New York", "London", "Tokyo", "Seoul", "Paris", "Dubai"];
+        const actions = ["minted 500 AIF", "staked 2000 AIF", "redeemed FilmToken", "joined Roadshow"];
+
+        setInterval(() => {
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const item = document.createElement('div');
+            item.className = "bg-zinc-800/80 backdrop-blur px-3 py-2 rounded-lg border border-zinc-700 text-xs flex justify-between items-center animate-fade-in-up";
+            item.innerHTML = `<span class="text-gray-400">${city}</span> <span class="text-white">${action}</span>`;
+            
+            liveTicker.prepend(item);
+            if (liveTicker.children.length > 4) liveTicker.lastChild.remove();
+        }, 2000);
+
+        // --- Init ---
+        window.addEventListener('load', () => {
+            renderProjects();
+            renderRoadshows();
+        });
+
     </script>
 </body>
 </html>
